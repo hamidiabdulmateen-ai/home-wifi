@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Internet Settings</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background: var(--bg-color);
+  color: var(--text-color);
+}
+
+/* ===== هدر ===== */
+header {
+  background: #f26522;
+  color: #fff;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+header .title { font-style: italic; font-weight: bold; }
+header .menu-toggle { cursor: pointer; font-size: 24px; }
+header .theme-toggle { cursor: pointer; font-size: 20px; margin-left: 10px; }
+
+/* ===== منو ===== */
+nav {
+  position: fixed;
+  top: 50px;
+  right: -100%;
+  width: 70%;
+  max-width: 250px;
+  height: calc(100vh - 50px);
+  background: var(--card-bg);
+  box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+  transition: right 0.3s;
+  overflow-y: auto;
+  z-index: 1000;
+  border-left: 1px solid var(--border-color);
+}
+nav.active { right: 0; }
+nav ul { list-style: none; padding: 0; margin: 0; }
+nav ul li {
+  padding: 15px 20px;
+  border-bottom: 1px solid var(--border-color);
+}
+nav ul li a {
+  text-decoration: none;
+  color: var(--text-color);
+}
+nav ul li:hover {
+  background: var(--bg-color);
+}
+
+/* ===== باکس تنظیمات ===== */
+.container { padding: 20px; }
+.box {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 20px;
+  max-width: 700px;
+  margin: 20px auto;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+.box h3 {
+  margin-top: 0;
+  font-size: 18px;
+}
+label { display: block; margin: 10px 0 5px; font-weight: bold; }
+input[type="text"], input[type="password"] {
+  width: 100%;
+  padding: 10px 40px 10px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+.password-wrapper { position: relative; }
+.password-wrapper .toggle-eye {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 16px;
+  color: #555;
+}
+.status { margin-top: 15px; font-size: 14px; }
+.status.success { color: green; }
+.status.error { color: red; }
+
+/* ===== دکمه سیو ===== */
+.save-btn {
+  position: fixed;
+  bottom: 10px;
+  right: 20px;
+  background: #f26522;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+.save-btn:hover { background: #d9541d; }
+
+/* ===== تم‌ها ===== */
+body[data-theme="light"] {
+  --bg-color: #f4f4f4;
+  --text-color: #333;
+  --card-bg: #fff;
+  --border-color: #ddd;
+}
+body[data-theme="dark"] {
+  --bg-color: #333;
+  --text-color: #f2f2f2;
+  --card-bg: #444;
+  --border-color: #555;
+}
+
+/* موبایل */
+@media (max-width: 480px) {
+  .box { padding: 15px; margin: 10px; }
+}
+</style>
+</head>
+<body data-theme="light">
+
+<header>
+  <div class="title">Tenda Router</div>
+  <div style="display:flex; align-items:center; gap:10px;">
+    <div class="menu-toggle" id="menuToggleBtn">☰</div>
+    <div class="theme-toggle" id="menuThemeToggle">🌙</div>
+  </div>
+</header>
+
+<nav id="mainMenu">
+  <ul>
+    <li>📊 <a href="index.html.html">Status</a></li>
+    <li>🌐 <a href="internet.html">Internet</a></li>
+    <li>📶 Wireless</li>
+    <li>📈 <a href="bandwidth.html">Bandwidth</a></li> 
+    <li>🔁 Repeating</li>
+    <li>👨‍👩‍👧 Parental</li>
+    <li>⚙️ Advanced</li>
+    <li>🔒 Security</li>
+    <li>🛠 Admin</li>
+  </ul>
+</nav>
+
+<div class="container">
+  <div class="box">
+    <h3>Internet Settings</h3>
+
+    <label>Connection Type</label>
+    <div>
+      <label><input type="radio" name="connection" checked> PPPoE</label>
+      <label><input type="radio" name="connection"> Dynamic IP</label>
+      <label><input type="radio" name="connection"> Static IP</label>
+    </div>
+
+    <label>User Name</label>
+    <input type="text" value="600333">
+
+    <label>Password</label>
+    <div class="password-wrapper">
+      <input type="password" id="password" value="123456">
+      <span class="toggle-eye" id="toggleEye">👁</span>
+    </div>
+
+    <div class="status success">You can surf the Internet</div>
+  </div>
+</div>
+
+<button class="save-btn" id="saveBtn">Save</button>
+
+<script>
+// منو
+const menuToggleBtn = document.getElementById("menuToggleBtn");
+const mainMenu = document.getElementById("mainMenu");
+menuToggleBtn.addEventListener("click", ()=> mainMenu.classList.toggle("active"));
+
+// تغییر تم
+const themeToggle = document.getElementById('menuThemeToggle');
+const body = document.body;
+const savedTheme = localStorage.getItem('siteTheme');
+if(savedTheme){
+  body.setAttribute('data-theme', savedTheme);
+  themeToggle.textContent = savedTheme === 'light' ? '🌙' : '☀️';
+}
+themeToggle.addEventListener('click', () => {
+  const current = body.getAttribute('data-theme') || 'light';
+  const next = current === 'light' ? 'dark' : 'light';
+  body.setAttribute('data-theme', next);
+  themeToggle.textContent = next === 'light' ? '🌙' : '☀️';
+  localStorage.setItem('siteTheme', next);
+});
+
+// نمایش/مخفی پسورد
+const toggleEye = document.getElementById('toggleEye');
+const passwordInput = document.getElementById('password');
+toggleEye.addEventListener('click', () => {
+  const type = passwordInput.getAttribute('type');
+  if (type === 'password') {
+    passwordInput.setAttribute('type', 'text');
+    toggleEye.textContent = '🙈';
+  } else {
+    passwordInput.setAttribute('type', 'password');
+    toggleEye.textContent = '👁';
+  }
+});
+
+// دکمه سیو
+document.getElementById('saveBtn').addEventListener('click', () => {
+  alert("تنظیمات شما ذخیره شد ✅");
+});
+</script>
+
+</body>
+</html>
