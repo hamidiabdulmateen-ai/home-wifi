@@ -3,19 +3,50 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Internet Settings</title>
+<title>Tenda Router - Internet Settings</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  background: var(--bg-color);
-  color: var(--text-color);
+:root {
+  --primary: #3498db;
+  --secondary: #f26522;
+  --success: #2ecc71;
+  --warning: #f39c12;
+  --danger: #e74c3c;
+  --dark: #2c3e50;
+  --light: #ecf0f1;
+  --gray: #95a5a6;
+  --text-dark: #2c3e50;
+  --text-light: #f9f9f9;
+  --border-light: #ddd;
+  --border-dark: #555;
+  --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  --transition: all 0.3s ease;
 }
 
-/* ===== هدر ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  color: var(--text-dark);
+  line-height: 1.6;
+  min-height: 100vh;
+  padding-bottom: 70px;
+}
+
+body[data-theme="dark"] {
+  background: linear-gradient(135deg, #2c3e50 0%, #1a2530 100%);
+  color: var(--text-light);
+}
+
+/* ===== هدر بهبود یافته ===== */
 header {
-  background: #f26522;
-  color: #fff;
+  background: linear-gradient(90deg, var(--secondary) 0%, #ff8c42 100%);
+  color: white;
   padding: 15px 20px;
   display: flex;
   justify-content: space-between;
@@ -23,206 +54,528 @@ header {
   position: sticky;
   top: 0;
   z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 0 0 12px 12px;
 }
-header .title { font-style: italic; font-weight: bold; }
-header .menu-toggle { cursor: pointer; font-size: 24px; }
-header .theme-toggle { cursor: pointer; font-size: 20px; margin-left: 10px; }
 
-/* ===== منو ===== */
+header .title {
+  font-weight: 700;
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+header .title i {
+  font-size: 1.6rem;
+}
+
+header .controls {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+header .menu-toggle {
+  cursor: pointer;
+  font-size: 1.5rem;
+  background: rgba(255, 255, 255, 0.2);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+
+header .menu-toggle:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
+}
+
+header .theme-toggle {
+  cursor: pointer;
+  font-size: 1.3rem;
+  background: rgba(255, 255, 255, 0.2);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+
+header .theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+/* ===== منوی بهبود یافته ===== */
 nav {
   position: fixed;
-  top: 50px;
+  top: 70px;
   right: -100%;
-  width: 70%;
-  max-width: 250px;
-  height: calc(100vh - 50px);
-  background: var(--card-bg);
+  width: 80%;
+  max-width: 300px;
+  height: calc(100vh - 70px);
+  background: var(--light);
   box-shadow: -5px 0 15px rgba(0,0,0,0.1);
-  transition: right 0.3s;
+  transition: right 0.3s ease-in-out;
   overflow-y: auto;
   z-index: 1000;
-  border-left: 1px solid var(--border-color);
-}
-nav.active { right: 0; }
-nav ul { list-style: none; padding: 0; margin: 0; }
-nav ul li {
-  padding: 15px 20px;
-  border-bottom: 1px solid var(--border-color);
-}
-nav ul li a {
-  text-decoration: none;
-  color: var(--text-color);
-}
-nav ul li:hover {
-  background: var(--bg-color);
+  border-left: 1px solid var(--border-light);
+  padding: 20px 0;
 }
 
-/* ===== باکس تنظیمات ===== */
-.container { padding: 20px; }
+body[data-theme="dark"] nav {
+  background: var(--dark);
+  border-left: 1px solid var(--border-dark);
+}
+
+nav.active { 
+  right: 0; 
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from { right: -100%; }
+  to { right: 0; }
+}
+
+nav ul { 
+  list-style: none; 
+  padding: 0; 
+  margin: 0; 
+}
+
+nav ul li {
+  padding: 15px 25px;
+  border-bottom: 1px solid var(--border-light);
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+body[data-theme="dark"] nav ul li {
+  border-bottom: 1px solid var(--border-dark);
+}
+
+nav ul li:hover {
+  background: rgba(52, 152, 219, 0.1);
+  padding-right: 30px;
+}
+
+nav ul li a {
+  text-decoration: none;
+  color: var(--text-dark);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+}
+
+body[data-theme="dark"] nav ul li a {
+  color: var(--text-light);
+}
+
+nav ul li i {
+  font-size: 1.2rem;
+  width: 24px;
+  text-align: center;
+  color: var(--secondary);
+}
+
+/* ===== باکس تنظیمات بهبود یافته ===== */
+.container { 
+  padding: 20px; 
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
 .box {
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  padding: 20px;
+  background: var(--light);
+  border: 1px solid var(--border-light);
+  border-radius: 16px;
+  padding: 25px;
   max-width: 700px;
   margin: 20px auto;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  box-shadow: var(--card-shadow);
+  transition: var(--transition);
 }
+
+body[data-theme="dark"] .box {
+  background: var(--dark);
+  border: 1px solid var(--border-dark);
+}
+
+.box:hover {
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
 .box h3 {
   margin-top: 0;
-  font-size: 18px;
+  font-size: 1.4rem;
+  color: var(--secondary);
+  padding-bottom: 15px;
+  border-bottom: 2px solid var(--secondary);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
-label { display: block; margin: 10px 0 5px; font-weight: bold; }
+
+.box h3 i {
+  font-size: 1.6rem;
+}
+
+label { 
+  display: block; 
+  margin: 15px 0 8px; 
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+body[data-theme="dark"] label {
+  color: var(--text-light);
+}
+
+.radio-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin: 10px 0;
+}
+
+.radio-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 10px 15px;
+  background: rgba(52, 152, 219, 0.1);
+  border-radius: 8px;
+  transition: var(--transition);
+}
+
+.radio-option:hover {
+  background: rgba(52, 152, 219, 0.2);
+}
+
+.radio-option input[type="radio"] {
+  margin: 0;
+  accent-color: var(--secondary);
+}
+
 input[type="text"], input[type="password"] {
   width: 100%;
-  padding: 10px 40px 10px 10px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 14px;
+  padding: 12px 45px 12px 15px;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  font-size: 16px;
   box-sizing: border-box;
+  transition: var(--transition);
 }
-.password-wrapper { position: relative; }
+
+input[type="text"]:focus, input[type="password"]:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+  outline: none;
+}
+
+.password-wrapper { 
+  position: relative; 
+  margin-bottom: 15px;
+}
+
 .password-wrapper .toggle-eye {
   position: absolute;
-  right: 10px;
+  right: 15px;
   top: 50%;
   transform: translateY(-50%);
   cursor: pointer;
-  font-size: 16px;
-  color: #555;
+  font-size: 18px;
+  color: var(--gray);
+  transition: var(--transition);
+  background: none;
+  border: none;
+  padding: 5px;
 }
-.status { margin-top: 15px; font-size: 14px; }
-.status.success { color: green; }
-.status.error { color: red; }
 
-/* ===== دکمه سیو ===== */
+.password-wrapper .toggle-eye:hover {
+  color: var(--primary);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.status { 
+  margin-top: 20px; 
+  padding: 12px 15px;
+  border-radius: 8px;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.status.success { 
+  background: rgba(46, 204, 113, 0.15); 
+  color: #27ae60;
+  border-left: 4px solid #2ecc71;
+}
+
+.status.error { 
+  background: rgba(231, 76, 60, 0.15); 
+  color: #c0392b;
+  border-left: 4px solid #e74c3c;
+}
+
+/* ===== دکمه سیو بهبود یافته ===== */
 .save-btn {
   position: fixed;
-  bottom: 10px;
+  bottom: 20px;
   right: 20px;
-  background: #f26522;
+  background: linear-gradient(90deg, var(--secondary) 0%, #ff8c42 100%);
   color: white;
   border: none;
-  padding: 12px 20px;
-  border-radius: 8px;
-  font-size: 14px;
+  padding: 15px 25px;
+  border-radius: 50px;
+  font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 15px rgba(242, 101, 34, 0.4);
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 900;
 }
-.save-btn:hover { background: #d9541d; }
 
-/* ===== تم‌ها ===== */
-body[data-theme="light"] {
-  --bg-color: #f4f4f4;
-  --text-color: #333;
-  --card-bg: #fff;
-  --border-color: #ddd;
+.save-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(242, 101, 34, 0.5);
 }
-body[data-theme="dark"] {
-  --bg-color: #333;
-  --text-color: #f2f2f2;
-  --card-bg: #444;
-  --border-color: #555;
+
+.save-btn:active {
+  transform: translateY(0);
 }
 
 /* موبایل */
+@media (max-width: 768px) {
+  header .title {
+    font-size: 1.2rem;
+  }
+  
+  .container {
+    padding: 15px;
+  }
+  
+  .box { 
+    padding: 20px; 
+    margin: 15px 0; 
+  }
+  
+  nav {
+    width: 85%;
+  }
+  
+  .save-btn {
+    bottom: 15px;
+    right: 15px;
+    padding: 12px 20px;
+  }
+}
+
 @media (max-width: 480px) {
-  .box { padding: 15px; margin: 10px; }
+  header {
+    padding: 12px 15px;
+  }
+  
+  header .title {
+    font-size: 1.1rem;
+  }
+  
+  .box { 
+    padding: 18px; 
+    border-radius: 14px;
+  }
+  
+  .radio-group {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  nav ul li {
+    padding: 12px 20px;
+  }
+  
+  .save-btn {
+    font-size: 14px;
+    padding: 12px 18px;
+  }
+}
+
+/* انیمیشن برای تغییر تم */
+.theme-change {
+  animation: themeChange 0.5s ease;
+}
+
+@keyframes themeChange {
+  0% { opacity: 1; }
+  50% { opacity: 0.7; }
+  100% { opacity: 1; }
 }
 </style>
 </head>
 <body data-theme="light">
 
 <header>
-  <div class="title">Tenda Router</div>
-  <div style="display:flex; align-items:center; gap:10px;">
-    <div class="menu-toggle" id="menuToggleBtn">☰</div>
-    <div class="theme-toggle" id="menuThemeToggle">🌙</div>
+  <div class="title">
+    <i class="fas fa-wifi"></i>
+    <span>Tenda Router</span>
+  </div>
+  <div class="controls">
+    <div class="theme-toggle" id="menuThemeToggle">
+      <i class="fas fa-moon"></i>
+    </div>
+    <div class="menu-toggle" id="menuToggleBtn">
+      <i class="fas fa-bars"></i>
+    </div>
   </div>
 </header>
 
 <nav id="mainMenu">
   <ul>
-    <li>📊 <a href="index.html">Status</a></li>
-    <li>🌐 <a href="internet.html">Internet</a></li>
-    <li>📶 Wireless</li>
-    <li>📈 <a href="bandwidth.html">Bandwidth</a></li> 
-    <li>🔁 Repeating</li>
-    <li>👨‍👩‍👧 Parental</li>
-    <li>⚙️ Advanced</li>
-    <li>🔒 Security</li>
-    <li>🛠 Admin</li>
+    <li><a href="status.html"><i class="fas fa-chart-bar"></i> Status</a></li>
+    <li><a href="internet.html"><i class="fas fa-globe"></i> Internet</a></li>
+    <li><a href="wireless.html"><i class="fas fa-wifi"></i> Wireless</a></li>
+    <li><a href="bandwidth.html"><i class="fas fa-tachometer-alt"></i> Bandwidth</a></li> 
+    <li><a href="repeating.html"><i class="fas fa-retweet"></i> Repeating</a></li>
+    <li><a href="#"><i class="fas fa-user-shield"></i> Parental</a></li>
+    <li><a href="#"><i class="fas fa-cogs"></i> Advanced</a></li>
+    <li><a href="#"><i class="fas fa-shield-alt"></i> Security</a></li>
+    <li><a href="#"><i class="fas fa-user-cog"></i> Admin</a></li>
   </ul>
 </nav>
 
 <div class="container">
   <div class="box">
-    <h3>Internet Settings</h3>
+    <h3><i class="fas fa-globe"></i> Internet Settings</h3>
 
     <label>Connection Type</label>
-    <div>
-      <label><input type="radio" name="connection" checked> PPPoE</label>
-      <label><input type="radio" name="connection"> Dynamic IP</label>
-      <label><input type="radio" name="connection"> Static IP</label>
+    <div class="radio-group">
+      <label class="radio-option">
+        <input type="radio" name="connection" checked> 
+        <i class="fas fa-network-wired"></i> PPPoE
+      </label>
+      <label class="radio-option">
+        <input type="radio" name="connection"> 
+        <i class="fas fa-bolt"></i> Dynamic IP
+      </label>
+      <label class="radio-option">
+        <input type="radio" name="connection"> 
+        <i class="fas fa-ethernet"></i> Static IP
+      </label>
     </div>
 
-    <label>User Name</label>
-    <input type="text" value="600333">
+    <label for="username">User Name</label>
+    <input type="text" id="username" value="600333">
 
-    <label>Password</label>
+    <label for="password">Password</label>
     <div class="password-wrapper">
       <input type="password" id="password" value="123456">
-      <span class="toggle-eye" id="toggleEye">👁</span>
+      <button class="toggle-eye" id="toggleEye">
+        <i class="fas fa-eye"></i>
+      </button>
     </div>
 
-    <div class="status success">You can surf the Internet</div>
+    <div class="status success">
+      <i class="fas fa-check-circle"></i> You can surf the Internet
+    </div>
   </div>
 </div>
 
-<button class="save-btn" id="saveBtn">Save</button>
+<button class="save-btn" id="saveBtn">
+  <i class="fas fa-save"></i> Save Settings
+</button>
 
 <script>
 // منو
 const menuToggleBtn = document.getElementById("menuToggleBtn");
 const mainMenu = document.getElementById("mainMenu");
-menuToggleBtn.addEventListener("click", ()=> mainMenu.classList.toggle("active"));
+menuToggleBtn.addEventListener("click", () => {
+  mainMenu.classList.toggle("active");
+  document.body.style.overflow = mainMenu.classList.contains('active') ? 'hidden' : '';
+});
 
 // تغییر تم
 const themeToggle = document.getElementById('menuThemeToggle');
+const themeIcon = themeToggle.querySelector('i');
 const body = document.body;
 const savedTheme = localStorage.getItem('siteTheme');
+
 if(savedTheme){
   body.setAttribute('data-theme', savedTheme);
-  themeToggle.textContent = savedTheme === 'light' ? '🌙' : '☀️';
+  themeIcon.className = savedTheme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
 }
+
 themeToggle.addEventListener('click', () => {
+  body.classList.add('theme-change');
   const current = body.getAttribute('data-theme') || 'light';
   const next = current === 'light' ? 'dark' : 'light';
+  
   body.setAttribute('data-theme', next);
-  themeToggle.textContent = next === 'light' ? '🌙' : '☀️';
+  themeIcon.className = next === 'light' ? 'fas fa-moon' : 'fas fa-sun';
   localStorage.setItem('siteTheme', next);
+  
+  setTimeout(() => {
+    body.classList.remove('theme-change');
+  }, 500);
 });
 
 // نمایش/مخفی پسورد
 const toggleEye = document.getElementById('toggleEye');
+const eyeIcon = toggleEye.querySelector('i');
 const passwordInput = document.getElementById('password');
+
 toggleEye.addEventListener('click', () => {
   const type = passwordInput.getAttribute('type');
   if (type === 'password') {
     passwordInput.setAttribute('type', 'text');
-    toggleEye.textContent = '🙈';
+    eyeIcon.className = 'fas fa-eye-slash';
   } else {
     passwordInput.setAttribute('type', 'password');
-    toggleEye.textContent = '👁';
+    eyeIcon.className = 'fas fa-eye';
   }
 });
 
 // دکمه سیو
 document.getElementById('saveBtn').addEventListener('click', () => {
-  alert("تنظیمات شما ذخیره شد ✅");
+  const btn = document.getElementById('saveBtn');
+  const originalText = btn.innerHTML;
+  
+  btn.innerHTML = '<i class="fas fa-check"></i> Saved!';
+  btn.style.background = 'linear-gradient(90deg, #2ecc71 0%, #27ae60 100%)';
+  
+  setTimeout(() => {
+    btn.innerHTML = originalText;
+    btn.style.background = 'linear-gradient(90deg, var(--secondary) 0%, #ff8c42 100%)';
+  }, 2000);
+});
+
+// بستن منو با کلیک خارج از آن
+document.addEventListener('click', (e) => {
+  if (mainMenu.classList.contains('active') && 
+      !e.target.closest('#mainMenu') && 
+      !e.target.closest('#menuToggleBtn')) {
+    mainMenu.classList.remove('active');
+    document.body.style.overflow = '';
+  }
 });
 </script>
 
 </body>
 </html>
-
