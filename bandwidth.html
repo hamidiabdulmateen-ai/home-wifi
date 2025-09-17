@@ -3,150 +3,524 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Connected Devices</title>
+<title>Tenda Router - Connected Devices</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-body { 
-  margin:0; 
-  font-family: Arial, sans-serif; 
-  background: var(--bg-color); 
-  color: var(--text-color);
+:root {
+  --primary: #3498db;
+  --secondary: #f26522;
+  --success: #2ecc71;
+  --warning: #f39c12;
+  --danger: #e74c3c;
+  --dark: #2c3e50;
+  --light: #ecf0f1;
+  --gray: #95a5a6;
+  --text-dark: #2c3e50;
+  --text-light: #f9f9f9;
+  --border-light: #ddd;
+  --border-dark: #555;
+  --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  --transition: all 0.3s ease;
 }
 
-/* هدر بالا */
-header { 
-  background:#f26522; 
-  color:#fff; 
-  padding:15px 20px; 
-  display:flex; 
-  justify-content:space-between; 
-  align-items:center; 
-  position:sticky; 
-  top:0; 
-  z-index:1000; 
-}
-header .title { font-style: italic; font-weight:bold; }
-header .menu-toggle { cursor:pointer; font-size:24px; }
-header .theme-toggle { cursor:pointer; font-size:20px; margin-left:10px; }
-
-/* منو */
-/* منو */
-nav { 
-  position:fixed; 
-  top:50px; 
-  right:-100%; 
-  width:70%; 
-  max-width:250px; 
-  height:calc(100vh - 50px); 
-  background: var(--card-bg);  /* به جای رنگ ثابت */
-  box-shadow:-5px 0 15px rgba(0,0,0,0.1); 
-  transition:right 0.3s; 
-  overflow-y:auto; 
-  z-index:1000; 
-  border-left:1px solid var(--border-color); /* به جای رنگ ثابت */
-  color: var(--text-color);
-}
-nav.active { right:0; }
-nav ul { list-style:none; padding:0; margin:0; }
-nav ul li { 
-  padding:15px 20px; 
-  border-bottom:1px solid var(--border-color); /* به جای رنگ ثابت */
-  cursor:pointer; 
-}
-nav ul li a { 
-  text-decoration:none; 
-  color: var(--text-color); /* به جای رنگ ثابت */
-}
-nav ul li:hover { 
-  background: var(--bg-color); /* هماهنگ با تم */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-nav.active { right:0; }
-nav ul { list-style:none; padding:0; margin:0; }
-nav ul li { padding:15px 20px; border-bottom:1px solid #ddd; cursor:pointer; }
-nav ul li a { text-decoration:none; color:#333; }
-nav ul li:hover { background:#f2f2f2; }
-
-/* محتوای اصلی */
-.container { padding:20px; margin-top:10px; }
-.device-count { font-style: italic; margin-bottom:10px; }
-.box { 
-  background: var(--card-bg); 
-  border: 1px solid var(--border-color);
-  border-radius:12px; 
-  padding:15px; 
-  margin-bottom:20px; 
-  box-shadow:0 2px 6px rgba(0,0,0,0.1); 
-}
-.device { display:flex; flex-direction:column; padding:10px; border-bottom:1px solid #eee; }
-.device:last-child { border-bottom:none; }
-.device-header { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:5px; }
-.device-name { font-weight:bold; }
-.device-ip { font-size:12px; color:#555; margin-top:4px; }
-.actions { display:flex; flex-wrap:wrap; gap:5px; }
-.actions button { padding:4px 8px; border:none; border-radius:6px; cursor:pointer; font-size:12px; flex-shrink:0; }
-.block { background:#ff4d4d; color:white; }
-.rename { background:#4da6ff; color:white; }
-.remove { background:#555; color:white; }
-
-/* ریسپانسیو */
-@media (max-width:480px) {
-  .device-header { flex-direction:column; align-items:flex-start; }
-  .actions { flex-wrap:wrap; margin-top:4px; }
-}
-
-/* تم‌ها */
-body[data-theme="light"] {
-  --bg-color: #f4f4f4;
-  --text-color: #333;
-  --card-bg: #fff;
-  --border-color: #ddd;
-  --success-color: #4caf50;
+body {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  color: var(--text-dark);
+  line-height: 1.6;
+  min-height: 100vh;
+  padding-bottom: 20px;
 }
 
 body[data-theme="dark"] {
-  --bg-color: #333;
-  --text-color: #f2f2f2;
-  --card-bg: #444;
-  --border-color: #555;
-  --success-color: #2ecc71;
+  background: linear-gradient(135deg, #2c3e50 0%, #1a2530 100%);
+  color: var(--text-light);
 }
 
-.device-speed { color: var(--success-color); }
+/* ===== هدر بهبود یافته ===== */
+header {
+  background: linear-gradient(90deg, var(--secondary) 0%, #ff8c42 100%);
+  color: white;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 0 0 12px 12px;
+}
+
+header .title {
+  font-weight: 700;
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+header .title i {
+  font-size: 1.6rem;
+}
+
+header .controls {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+header .menu-toggle {
+  cursor: pointer;
+  font-size: 1.5rem;
+  background: rgba(255, 255, 255, 0.2);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+
+header .menu-toggle:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
+}
+
+header .theme-toggle {
+  cursor: pointer;
+  font-size: 1.3rem;
+  background: rgba(255, 255, 255, 0.2);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+
+header .theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+/* ===== منوی بهبود یافته ===== */
+nav {
+  position: fixed;
+  top: 70px;
+  right: -100%;
+  width: 80%;
+  max-width: 300px;
+  height: calc(100vh - 70px);
+  background: var(--light);
+  box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+  transition: right 0.3s ease-in-out;
+  overflow-y: auto;
+  z-index: 1000;
+  border-left: 1px solid var(--border-light);
+  padding: 20px 0;
+}
+
+body[data-theme="dark"] nav {
+  background: var(--dark);
+  border-left: 1px solid var(--border-dark);
+}
+
+nav.active { 
+  right: 0; 
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from { right: -100%; }
+  to { right: 0; }
+}
+
+nav ul { 
+  list-style: none; 
+  padding: 0; 
+  margin: 0; 
+}
+
+nav ul li {
+  padding: 15px 25px;
+  border-bottom: 1px solid var(--border-light);
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+body[data-theme="dark"] nav ul li {
+  border-bottom: 1px solid var(--border-dark);
+}
+
+nav ul li:hover {
+  background: rgba(52, 152, 219, 0.1);
+  padding-right: 30px;
+}
+
+nav ul li a {
+  text-decoration: none;
+  color: var(--text-dark);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+}
+
+body[data-theme="dark"] nav ul li a {
+  color: var(--text-light);
+}
+
+nav ul li i {
+  font-size: 1.2rem;
+  width: 24px;
+  text-align: center;
+  color: var(--secondary);
+}
+
+/* ===== محتوای اصلی ===== */
+.container { 
+  padding: 20px; 
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.device-count {
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+  padding: 12px 15px;
+  background: var(--light);
+  border-radius: 10px;
+  box-shadow: var(--card-shadow);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  color: var(--secondary);
+}
+
+body[data-theme="dark"] .device-count {
+  background: var(--dark);
+}
+
+.device-count i {
+  font-size: 1.3rem;
+}
+
+/* ===== کارت دستگاه‌ها ===== */
+.box {
+  background: var(--light);
+  border: 1px solid var(--border-light);
+  border-radius: 16px;
+  padding: 25px;
+  margin-bottom: 25px;
+  box-shadow: var(--card-shadow);
+  transition: var(--transition);
+}
+
+body[data-theme="dark"] .box {
+  background: var(--dark);
+  border: 1px solid var(--border-dark);
+}
+
+.box:hover {
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+.box h3 {
+  margin-top: 0;
+  font-size: 1.4rem;
+  color: var(--secondary);
+  padding-bottom: 15px;
+  border-bottom: 2px solid var(--secondary);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.box h3 i {
+  font-size: 1.6rem;
+}
+
+/* ===== دستگاه‌ها ===== */
+.device {
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+  border-bottom: 1px solid var(--border-light);
+  transition: var(--transition);
+  border-radius: 8px;
+  margin-bottom: 10px;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+body[data-theme="dark"] .device {
+  background: rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--border-dark);
+}
+
+.device:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.device:hover {
+  background: rgba(52, 152, 219, 0.1);
+  transform: translateX(5px);
+}
+
+.device-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.device-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.device-name {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: var(--text-dark);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+body[data-theme="dark"] .device-name {
+  color: var(--text-light);
+}
+
+.device-name i {
+  font-size: 1.2rem;
+  color: var(--primary);
+}
+
+.device-stats {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-size: 0.9rem;
+  color: var(--gray);
+  margin-top: 5px;
+  flex-wrap: wrap;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.stat-item i {
+  font-size: 0.9rem;
+}
+
+.device-ip {
+  font-size: 0.85rem;
+  color: var(--gray);
+  margin-top: 5px;
+  padding: 5px 0;
+  font-family: monospace;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.actions button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: var(--transition);
+}
+
+.actions button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.actions button:active {
+  transform: translateY(0);
+}
+
+.actions .block {
+  background: var(--danger);
+  color: white;
+}
+
+.actions .rename {
+  background: var(--primary);
+  color: white;
+}
+
+.actions .remove {
+  background: var(--dark);
+  color: white;
+}
+
+/* ===== دستگاه‌های مسدود شده ===== */
+.blocked-device .device-name {
+  color: var(--danger);
+}
+
+.blocked-device .device-name i {
+  color: var(--danger);
+}
+
+/* ===== انیمیشن‌ها ===== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.pulse {
+  animation: pulse 2s infinite;
+}
+
+/* ===== رسپانسیو ===== */
+@media (max-width: 768px) {
+  header .title {
+    font-size: 1.2rem;
+  }
+  
+  .container {
+    padding: 15px;
+  }
+  
+  .box { 
+    padding: 20px; 
+    margin-bottom: 20px; 
+  }
+  
+  nav {
+    width: 85%;
+  }
+  
+  .device-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .actions {
+    margin-top: 10px;
+    width: 100%;
+    justify-content: flex-start;
+  }
+  
+  .device-stats {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+}
+
+@media (max-width: 480px) {
+  header {
+    padding: 12px 15px;
+  }
+  
+  header .title {
+    font-size: 1.1rem;
+  }
+  
+  .box { 
+    padding: 18px; 
+    border-radius: 14px;
+  }
+  
+  .device {
+    padding: 12px;
+  }
+  
+  .actions button {
+    padding: 5px 10px;
+    font-size: 0.8rem;
+  }
+}
 </style>
 </head>
-<body>
+<body data-theme="light">
+
 <header>
-  <div class="title">Tenda Router</div>
-  <div style="display:flex; align-items:center; gap:10px;">
-    <div class="menu-toggle" id="menuToggleBtn">☰</div>
-    <div class="theme-toggle" id="menuThemeToggle">🌙</div>
+  <div class="title">
+    <i class="fas fa-wifi"></i>
+    <span>Tenda Router</span>
+  </div>
+  <div class="controls">
+    <div class="theme-toggle" id="menuThemeToggle">
+      <i class="fas fa-moon"></i>
+    </div>
+    <div class="menu-toggle" id="menuToggleBtn">
+      <i class="fas fa-bars"></i>
+    </div>
   </div>
 </header>
 
 <nav id="mainMenu">
   <ul>
-    <li>📊 <a href="index.html">Status</a></li>
-    <li>🌐 <a href="internet.html">Internet</a></li>
-    <li>📶 Wireless</li>
-    <li>📈 <a href="#">Bandwidth</a></li> 
-    <li>🔁 Repeating</li>
-    <li>👨‍👩‍👧 Parental</li>
-    <li>⚙️ Advanced</li>
-    <li>🔒 Security</li>
-    <li>🛠 Admin</li>
+    <li><a href="index.html"><i class="fas fa-chart-bar"></i> Status</a></li>
+    <li><a href="internet.html"><i class="fas fa-globe"></i> Internet</a></li>
+    <li><a href="#"><i class="fas fa-wifi"></i> Wireless</a></li>
+    <li><a href="bandwidth.html"><i class="fas fa-tachometer-alt"></i> Bandwidth</a></li> 
+    <li><a href="#"><i class="fas fa-retweet"></i> Repeating</a></li>
+    <li><a href="#"><i class="fas fa-user-shield"></i> Parental</a></li>
+    <li><a href="#"><i class="fas fa-cogs"></i> Advanced</a></li>
+    <li><a href="#"><i class="fas fa-shield-alt"></i> Security</a></li>
+    <li><a href="#"><i class="fas fa-user-cog"></i> Admin</a></li>
   </ul>
 </nav>
 
 <div class="container">
-  <div class="device-count" id="deviceCount"></div>
+  <div class="device-count fade-in" id="deviceCount">
+    <i class="fas fa-laptop"></i>
+    <span>Total Connected Devices: 12</span>
+  </div>
 
-  <div class="box" id="connectedBox">
-    <h3>Connected Devices</h3>
+  <div class="box fade-in" id="connectedBox">
+    <h3><i class="fas fa-network-wired"></i> Connected Devices</h3>
     <div id="connectedDevices"></div>
   </div>
 
-  <div class="box" id="blockedBox">
-    <h3>Blocked Devices</h3>
+  <div class="box fade-in" id="blockedBox">
+    <h3><i class="fas fa-ban"></i> Blocked Devices</h3>
     <div id="blockedDevices"></div>
   </div>
 </div>
@@ -159,14 +533,53 @@ const deviceCountEl = document.getElementById("deviceCount");
 // Menu toggle
 const menuToggleBtn = document.getElementById("menuToggleBtn");
 const mainMenu = document.getElementById("mainMenu");
-menuToggleBtn.addEventListener("click", ()=>{
+menuToggleBtn.addEventListener("click", () => {
   mainMenu.classList.toggle("active");
+  document.body.style.overflow = mainMenu.classList.contains('active') ? 'hidden' : '';
+});
+
+// تغییر تم
+const themeToggle = document.getElementById('menuThemeToggle');
+const themeIcon = themeToggle.querySelector('i');
+const body = document.body;
+const savedTheme = localStorage.getItem('siteTheme');
+
+if(savedTheme){
+  body.setAttribute('data-theme', savedTheme);
+  themeIcon.className = savedTheme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
+}
+
+themeToggle.addEventListener('click', () => {
+  const current = body.getAttribute('data-theme') || 'light';
+  const next = current === 'light' ? 'dark' : 'light';
+  
+  body.setAttribute('data-theme', next);
+  themeIcon.className = next === 'light' ? 'fas fa-moon' : 'fas fa-sun';
+  localStorage.setItem('siteTheme', next);
 });
 
 // Helper functions
-function randomIP(){ return `${Math.floor(Math.random()*256)}.${Math.floor(Math.random()*256)}.${Math.floor(Math.random()*256)}.${Math.floor(Math.random()*256)}`; }
-function randomUsage(){ const b=Math.floor(Math.random()*(2000-200+1)+200); return b<1000?b+" KB":(b/1000).toFixed(2)+" MB"; }
-function randomSpeed(){ return `${Math.floor(Math.random()*100)+1} Mbps`; }
+function randomIP(){ 
+  return `${Math.floor(Math.random()*256)}.${Math.floor(Math.random()*256)}.${Math.floor(Math.random()*256)}.${Math.floor(Math.random()*256)}`; 
+}
+
+function randomUsage(){ 
+  const b = Math.floor(Math.random()*(2000-200+1)+200); 
+  return b < 1000 ? b + " KB" : (b/1000).toFixed(2) + " MB"; 
+}
+
+function randomSpeed(){ 
+  return `${Math.floor(Math.random()*100)+1} Mbps`; 
+}
+
+function getDeviceIcon(deviceName) {
+  if (deviceName.includes('IPHONE') || deviceName.includes('IPHOEN')) return 'mobile-alt';
+  if (deviceName.includes('SAMSUNG')) return 'mobile';
+  if (deviceName.includes('LG')) return 'mobile';
+  if (deviceName.includes('HAWAWI')) return 'mobile';
+  if (deviceName.includes('INFINIX')) return 'mobile';
+  return 'laptop';
+}
 
 // Initial devices
 let connectedDevices = [
@@ -187,78 +600,167 @@ let blockedDevices = [];
 
 // Render functions
 function renderDevices(){
-  connectedDevicesEl.innerHTML="";
-  connectedDevices.forEach((device,index)=>{
-    const div=document.createElement("div"); div.className="device";
+  connectedDevicesEl.innerHTML = "";
+  connectedDevices.forEach((device, index) => {
+    const div = document.createElement("div"); 
+    div.className = "device fade-in";
+    div.style.animationDelay = `${index * 0.05}s`;
 
-    const header=document.createElement("div"); header.className="device-header";
+    const header = document.createElement("div"); 
+    header.className = "device-header";
 
-    const nameSpan=document.createElement("span"); nameSpan.className="device-name"; nameSpan.textContent=device.name;
+    const deviceInfo = document.createElement("div");
+    deviceInfo.className = "device-info";
+    
+    const nameSpan = document.createElement("div"); 
+    nameSpan.className = "device-name";
+    
+    const deviceIcon = document.createElement("i");
+    deviceIcon.className = `fas fa-${getDeviceIcon(device.name)}`;
+    nameSpan.appendChild(deviceIcon);
+    
+    const nameText = document.createTextNode(device.name);
+    nameSpan.appendChild(nameText);
 
-    const usageSpan=document.createElement("span"); usageSpan.textContent=`Usage: ${randomUsage()} | Speed: ${randomSpeed()}`;
+    const statsDiv = document.createElement("div");
+    statsDiv.className = "device-stats";
+    
+    const usageSpan = document.createElement("div");
+    usageSpan.className = "stat-item";
+    usageSpan.innerHTML = `<i class="fas fa-download"></i> Usage: ${randomUsage()}`;
+    
+    const speedSpan = document.createElement("div");
+    speedSpan.className = "stat-item";
+    speedSpan.innerHTML = `<i class="fas fa-tachometer-alt"></i> Speed: ${randomSpeed()}`;
+    
+    statsDiv.appendChild(usageSpan);
+    statsDiv.appendChild(speedSpan);
 
-    const actionSpan=document.createElement("span"); actionSpan.className="actions";
-    actionSpan.innerHTML=`<button class="block" onclick="blockDevice(${index})">Block</button><button class="rename" onclick="renameDevice(${index})">Rename</button>`;
+    deviceInfo.appendChild(nameSpan);
+    deviceInfo.appendChild(statsDiv);
 
-    header.appendChild(nameSpan); header.appendChild(usageSpan); header.appendChild(actionSpan);
+    const actionSpan = document.createElement("div"); 
+    actionSpan.className = "actions";
+    actionSpan.innerHTML = `
+      <button class="block" onclick="blockDevice(${index})">
+        <i class="fas fa-ban"></i> Block
+      </button>
+      <button class="rename" onclick="renameDevice(${index})">
+        <i class="fas fa-edit"></i> Rename
+      </button>
+    `;
 
-    const ipDiv=document.createElement("div"); ipDiv.className="device-ip"; ipDiv.textContent=`IP: ${device.ip}`;
+    header.appendChild(deviceInfo);
+    header.appendChild(actionSpan);
 
-    div.appendChild(header); div.appendChild(ipDiv);
+    const ipDiv = document.createElement("div"); 
+    ipDiv.className = "device-ip"; 
+    ipDiv.innerHTML = `<i class="fas fa-network-wired"></i> IP: ${device.ip}`;
+
+    div.appendChild(header); 
+    div.appendChild(ipDiv);
     connectedDevicesEl.appendChild(div);
   });
-  deviceCountEl.textContent=`Total Connected Devices: ${connectedDevices.length}`;
+  
+  deviceCountEl.innerHTML = `<i class="fas fa-laptop"></i> Total Connected Devices: ${connectedDevices.length}`;
 }
 
 function renderBlocked(){
-  blockedDevicesEl.innerHTML="";
-  blockedDevices.forEach((device,index)=>{
-    const div=document.createElement("div"); div.className="device";
+  blockedDevicesEl.innerHTML = "";
+  
+  if (blockedDevices.length === 0) {
+    blockedDevicesEl.innerHTML = `
+      <div style="text-align: center; padding: 20px; color: var(--gray);">
+        <i class="fas fa-ban" style="font-size: 2rem; margin-bottom: 10px;"></i>
+        <p>No blocked devices</p>
+      </div>
+    `;
+    return;
+  }
+  
+  blockedDevices.forEach((device, index) => {
+    const div = document.createElement("div"); 
+    div.className = "device blocked-device fade-in";
+    div.style.animationDelay = `${index * 0.05}s`;
 
-    const header=document.createElement("div"); header.className="device-header";
+    const header = document.createElement("div"); 
+    header.className = "device-header";
 
-    const nameSpan=document.createElement("span"); nameSpan.className="device-name"; nameSpan.textContent="🚫 "+device.name;
+    const deviceInfo = document.createElement("div");
+    deviceInfo.className = "device-info";
+    
+    const nameSpan = document.createElement("div"); 
+    nameSpan.className = "device-name";
+    
+    const deviceIcon = document.createElement("i");
+    deviceIcon.className = `fas fa-${getDeviceIcon(device.name)}`;
+    nameSpan.appendChild(deviceIcon);
+    
+    const nameText = document.createTextNode(device.name);
+    nameSpan.appendChild(nameText);
 
-    const actionSpan=document.createElement("span"); actionSpan.className="actions";
-    actionSpan.innerHTML=`<button class="remove" onclick="removeBlocked(${index})">Remove</button>`;
+    deviceInfo.appendChild(nameSpan);
 
-    header.appendChild(nameSpan); header.appendChild(actionSpan);
-    div.appendChild(header); blockedDevicesEl.appendChild(div);
+    const actionSpan = document.createElement("div"); 
+    actionSpan.className = "actions";
+    actionSpan.innerHTML = `
+      <button class="remove" onclick="removeBlocked(${index})">
+        <i class="fas fa-trash-alt"></i> Remove
+      </button>
+    `;
+
+    header.appendChild(deviceInfo);
+    header.appendChild(actionSpan);
+
+    const ipDiv = document.createElement("div"); 
+    ipDiv.className = "device-ip"; 
+    ipDiv.innerHTML = `<i class="fas fa-network-wired"></i> IP: ${device.ip}`;
+
+    div.appendChild(header); 
+    div.appendChild(ipDiv);
+    blockedDevicesEl.appendChild(div);
   });
 }
 
 // Actions
-function blockDevice(i){ blockedDevices.push(connectedDevices[i]); connectedDevices.splice(i,1); renderDevices(); renderBlocked(); }
-function removeBlocked(i){ connectedDevices.push(blockedDevices[i]); blockedDevices.splice(i,1); renderDevices(); renderBlocked(); }
-function renameDevice(i){ const newName=prompt("Enter new device name:", connectedDevices[i].name); if(newName){ connectedDevices[i].name=newName; renderDevices(); } }
+function blockDevice(i){ 
+  blockedDevices.push(connectedDevices[i]); 
+  connectedDevices.splice(i,1); 
+  renderDevices(); 
+  renderBlocked(); 
+}
+
+function removeBlocked(i){ 
+  connectedDevices.push(blockedDevices[i]); 
+  blockedDevices.splice(i,1); 
+  renderDevices(); 
+  renderBlocked(); 
+}
+
+function renameDevice(i){ 
+  const newName = prompt("Enter new device name:", connectedDevices[i].name); 
+  if(newName){ 
+    connectedDevices[i].name = newName; 
+    renderDevices(); 
+  } 
+}
 
 // Initial render and periodic refresh
 renderDevices();
 renderBlocked();
-setInterval(renderDevices,5000); // Update usage & speed every 5s
 
-// Theme toggle
-const menuThemeToggle = document.getElementById('menuThemeToggle');
-const body = document.body;
+// Update usage & speed every 5s
+setInterval(renderDevices, 5000);
 
-// بررسی تم ذخیره‌شده
-const savedTheme = localStorage.getItem('siteTheme');
-if(savedTheme){
-  body.setAttribute('data-theme', savedTheme);
-  menuThemeToggle.textContent = savedTheme === 'light' ? '🌙' : '☀️';
-} else {
-  body.setAttribute('data-theme', 'light');
-}
-
-// تغییر تم با کلیک
-menuThemeToggle.addEventListener('click', () => {
-  const currentTheme = body.getAttribute('data-theme') || 'light';
-  const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-  body.setAttribute('data-theme', newTheme);
-  menuThemeToggle.textContent = newTheme === 'light' ? '🌙' : '☀️';
-  localStorage.setItem('siteTheme', newTheme);
+// بستن منو با کلیک خارج از آن
+document.addEventListener('click', (e) => {
+  if (mainMenu.classList.contains('active') && 
+      !e.target.closest('#mainMenu') && 
+      !e.target.closest('#menuToggleBtn')) {
+    mainMenu.classList.remove('active');
+    document.body.style.overflow = '';
+  }
 });
 </script>
 </body>
 </html>
-
