@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Tenda Router - Parental Control</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root {
+  --primary: #3498db;
+  --secondary: #f26522;
+  --success: #2ecc71;
+  --warning: #f39c12;
+  --danger: #e74c3c;
+  --dark: #2c3e50;
+  --light: #ecf0f1;
+  --gray: #95a5a6;
+  --text-dark: #2c3e50;
+  --text-light: #f9f9f9;
+  --border-light: #ddd;
+  --border-dark: #555;
+  --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  --transition: all 0.3s ease;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  color: var(--text-dark);
+  line-height: 1.6;
+  min-height: 100vh;
+  padding-bottom: 20px;
+}
+
+body[data-theme="dark"] {
+  background: linear-gradient(135deg, #2c3e50 0%, #1a2530 100%);
+  color: var(--text-light);
+}
+
+/* ===== هدر بهبود یافته ===== */
+header {
+  background: linear-gradient(90deg, var(--secondary) 0%, #ff8c42 100%);
+  color: white;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 0 0 12px 12px;
+}
+
+header .title {
+  font-weight: 700;
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+header .title i {
+  font-size: 1.6rem;
+}
+
+header .controls {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+header .menu-toggle {
+  cursor: pointer;
+  font-size: 1.5rem;
+  background: rgba(255, 255, 255, 0.2);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+
+header .menu-toggle:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
+}
+
+header .theme-toggle {
+  cursor: pointer;
+  font-size: 1.3rem;
+  background: rgba(255, 255, 255, 0.2);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+
+header .theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+/* ===== منوی بهبود یافته ===== */
+nav {
+  position: fixed;
+  top: 70px;
+  right: -100%;
+  width: 80%;
+  max-width: 300px;
+  height: calc(100vh - 70px);
+  background: var(--light);
+  box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+  transition: right 0.3s ease-in-out;
+  overflow-y: auto;
+  z-index: 1000;
+  border-left: 1px solid var(--border-light);
+  padding: 20px 0;
+}
+
+body[data-theme="dark"] nav {
+  background: var(--dark);
+  border-left: 1px solid var(--border-dark);
+}
+
+nav.active { 
+  right: 0; 
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from { right: -100%; }
+  to { right: 0; }
+}
+
+nav ul { 
+  list-style: none; 
+  padding: 0; 
+  margin: 0; 
+}
+
+nav ul li {
+  padding: 15px 25px;
+  border-bottom: 1px solid var(--border-light);
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+body[data-theme="dark"] nav ul li {
+  border-bottom: 1px solid var(--border-dark);
+}
+
+nav ul li:hover {
+  background: rgba(52, 152, 219, 0.1);
+  padding-right: 30px;
+}
+
+nav ul li a {
+  text-decoration: none;
+  color: var(--text-dark);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+}
+
+body[data-theme="dark"] nav ul li a {
+  color: var(--text-light);
+}
+
+nav ul li i {
+  font-size: 1.2rem;
+  width: 24px;
+  text-align: center;
+  color: var(--secondary);
+}
+
+/* ===== محتوای اصلی ===== */
+.container { 
+  padding: 20px; 
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.card {
+  background: var(--light);
+  border: 1px solid var(--border-light);
+  border-radius: 16px;
+  padding: 25px;
+  margin-bottom: 25px;
+  box-shadow: var(--card-shadow);
+  transition: var(--transition);
+}
+
+body[data-theme="dark"] .card {
+  background: var(--dark);
+  border: 1px solid var(--border-dark);
+}
+
+.card:hover {
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+.card h3 {
+  margin-top: 0;
+  font-size: 1.4rem;
+  color: var(--secondary);
+  padding-bottom: 15px;
+  border-bottom: 2px solid var(--secondary);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.card h3 i {
+  font-size: 1.6rem;
+}
+
+/* ===== جدول دستگاه‌ها ===== */
+.devices-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+}
+
+.devices-table th, 
+.devices-table td {
+  padding: 15px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-light);
+}
+
+body[data-theme="dark"] .devices-table th, 
+body[data-theme="dark"] .devices-table td {
+  border-bottom: 1px solid var(--border-dark);
+}
+
+.devices-table th {
+  background: rgba(52, 152, 219, 0.1);
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+body[data-theme="dark"] .devices-table th {
+  color: var(--text-light);
+}
+
+.devices-table tr:hover {
+  background: rgba(52, 152, 219, 0.05);
+}
+
+.device-name {
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.device-name i {
+  color: var(--primary);
+  font-size: 1.2rem;
+}
+
+.device-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.edit-btn {
+  color: var(--primary);
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: var(--transition);
+}
+
+.edit-btn:hover {
+  color: var(--secondary);
+  transform: scale(1.2);
+}
+
+/* ===== سوئیچ toggle ===== */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--gray);
+  transition: .4s;
+  border-radius: 34px;
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .toggle-slider {
+  background-color: var(--secondary);
+}
+
+input:checked + .toggle-slider:before {
+  transform: translateX(26px);
+}
+
+/* ===== کنترل والدین ===== */
+.access-control {
+  margin-top: 30px;
+}
+
+.control-group {
+  margin-bottom: 20px;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 10px;
+  transition: var(--transition);
+}
+
+body[data-theme="dark"] .control-group {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.control-group:hover {
+  background: rgba(52, 152, 219, 0.1);
+}
+
+.control-title {
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: var(--text-dark);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+body[data-theme="dark"] .control-title {
+  color: var(--text-light);
+}
+
+.control-title i {
+  color: var(--primary);
+  font-size: 1.2rem;
+}
+
+.time-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 15px;
+}
+
+.time-input {
+  padding: 10px;
+  border: 2px solid var(--border-light);
+  border-radius: 8px;
+  font-size: 16px;
+  transition: var(--transition);
+  background: var(--light);
+  color: var(--text-dark);
+}
+
+body[data-theme="dark"] .time-input {
+  background: var(--dark);
+  color: var(--text-light);
+  border: 2px solid var(--border-dark);
+}
+
+.time-input:focus {
+  border-color: var(--primary);
+  outline: none;
+}
+
+.days-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.day-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  padding: 8px 12px;
+  background: rgba(52, 152, 219, 0.1);
+  border-radius: 8px;
+  transition: var(--transition);
+}
+
+.day-checkbox:hover {
+  background: rgba(52, 152, 219, 0.2);
+}
+
+.day-checkbox input[type="checkbox"] {
+  accent-color: var(--secondary);
+}
+
+.select-control {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid var(--border-light);
+  border-radius: 8px;
+  font-size: 16px;
+  transition: var(--transition);
+  background: var(--light);
+  color: var(--text-dark);
+}
+
+body[data-theme="dark"] .select-control {
+  background: var(--dark);
+  color: var(--text-light);
+  border: 2px solid var(--border-dark);
+}
+
+.select-control:focus {
+  border-color: var(--primary);
+  outline: none;
+}
+
+/* ===== دکمه‌ها ===== */
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 30px;
+}
+
+.btn {
+  padding: 12px 25px;
+  border: none;
+  border-radius: 50px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: var(--transition);
+}
+
+.btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn-ok {
+  background: linear-gradient(90deg, var(--secondary) 0%, #ff8c42 100%);
+  color: white;
+}
+
+.btn-cancel {
+  background: var(--gray);
+  color: white;
+}
+
+/* ===== رسپانسیو ===== */
+@media (max-width: 768px) {
+  header .title {
+    font-size: 1.2rem;
+  }
+  
+  .container {
+    padding: 15px;
+  }
+  
+  .card { 
+    padding: 20px; 
+    margin-bottom: 20px; 
+  }
+  
+  nav {
+    width: 85%;
+  }
+  
+  .devices-table {
+    display: block;
+    overflow-x: auto;
+  }
+  
+  .time-controls {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .actions {
+    flex-direction: column;
+  }
+  
+  .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  header {
+    padding: 12px 15px;
+  }
+  
+  header .title {
+    font-size: 1.1rem;
+  }
+  
+  .card { 
+    padding: 18px; 
+    border-radius: 14px;
+  }
+  
+  .devices-table th, 
+  .devices-table td {
+    padding: 10px;
+  }
+  
+  .device-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  nav ul li {
+    padding: 12px 20px;
+  }
+}
+</style>
+</head>
+<body data-theme="light">
+
+<header>
+  <div class="title">
+    <i class="fas fa-user-shield"></i>
+    <span>Tenda Router - Parental Control</span>
+  </div>
+  <div class="controls">
+    <div class="theme-toggle" id="menuThemeToggle">
+      <i class="fas fa-moon"></i>
+    </div>
+    <div class="menu-toggle" id="menuToggleBtn">
+      <i class="fas fa-bars"></i>
+    </div>
+  </div>
+</header>
+
+<nav id="mainMenu">
+  <ul>
+    <li><a href="index.html"><i class="fas fa-chart-bar"></i> Status</a></li>
+    <li><a href="internet.html"><i class="fas fa-globe"></i> Internet</a></li>
+    <li><a href="wireless.html"><i class="fas fa-wifi"></i> Wireless</a></li>
+    <li><a href="bandwidth.html"><i class="fas fa-tachometer-alt"></i> Bandwidth</a></li> 
+    <li><a href="repeating.html"><i class="fas fa-retweet"></i> Repeating</a></li>
+    <li><a href="parental.html"><i class="fas fa-user-shield"></i> Parental</a></li>
+    <li><a href="advanced.html"><i class="fas fa-cogs"></i> Advanced</a></li>
+    <li><a href="security.html"><i class="fas fa-shield-alt"></i> Security</a></li>
+    <li><a href="admin.html"><i class="fas fa-user-cog"></i> Admin</a></li>
+  </ul>
+</nav>
+
+<div class="container">
+  <div class="card fade-in">
+    <h3><i class="fas fa-laptop"></i> Attached Devices</h3>
+    
+    <table class="devices-table">
+      <thead>
+        <tr>
+          <th>Device Name</th>
+          <th>Manage</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <div class="device-name">
+              <i class="fas fa-mobile-alt"></i>
+              <span>Infinix</span>
+            </div>
+          </td>
+          <td>
+            <div class="device-actions">
+              <i class="fas fa-pen edit-btn" title="Edit Device"></i>
+              <label class="toggle-switch">
+                <input type="checkbox">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div class="device-name">
+              <i class="fas fa-mobile"></i>
+              <span>Galaxy-J7-Core</span>
+            </div>
+          </td>
+          <td>
+            <div class="device-actions">
+              <i class="fas fa-pen edit-btn" title="Edit Device"></i>
+              <label class="toggle-switch">
+                <input type="checkbox">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div class="device-name">
+              <i class="fas fa-question-circle"></i>
+              <span>Unknown</span>
+            </div>
+          </td>
+          <td>
+            <div class="device-actions">
+              <i class="fas fa-pen edit-btn" title="Edit Device"></i>
+              <label class="toggle-switch">
+                <input type="checkbox">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div class="device-name">
+              <i class="fas fa-tablet-alt"></i>
+              <span>maroo</span>
+            </div>
+          </td>
+          <td>
+            <div class="device-actions">
+              <i class="fas fa-pen edit-btn" title="Edit Device"></i>
+              <label class="toggle-switch">
+                <input type="checkbox">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div class="device-name">
+              <i class="fas fa-desktop"></i>
+              <span>10</span>
+            </div>
+          </td>
+          <td>
+            <div class="device-actions">
+              <i class="fas fa-pen edit-btn" title="Edit Device"></i>
+              <label class="toggle-switch">
+                <input type="checkbox">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card fade-in">
+    <h3><i class="fas fa-shield-alt"></i> Access Restrictions</h3>
+    <p>Settings below will be applied to all managed devices</p>
+    
+    <div class="access-control">
+      <div class="control-group">
+        <div class="control-title">
+          <i class="fas fa-clock"></i>
+          <span>Allow access during:</span>
+        </div>
+        <div class="time-controls">
+          <input type="time" class="time-input" value="19:00">
+          <span>to</span>
+          <input type="time" class="time-input" value="21:00">
+        </div>
+      </div>
+      
+      <div class="control-group">
+        <div class="control-title">
+          <i class="fas fa-calendar-alt"></i>
+          <span>Repeat on days:</span>
+        </div>
+        <div class="days-container">
+          <label class="day-checkbox">
+            <input type="checkbox">
+            <span>Everyday</span>
+          </label>
+          <label class="day-checkbox">
+            <input type="checkbox">
+            <span>Mon</span>
+          </label>
+          <label class="day-checkbox">
+            <input type="checkbox">
+            <span>Tue</span>
+          </label>
+          <label class="day-checkbox">
+            <input type="checkbox">
+            <span>Wed</span>
+          </label>
+          <label class="day-checkbox">
+            <input type="checkbox">
+            <span>Thu</span>
+          </label>
+          <label class="day-checkbox">
+            <input type="checkbox" checked>
+            <span>Fri</span>
+          </label>
+          <label class="day-checkbox">
+            <input type="checkbox" checked>
+            <span>Sat</span>
+          </label>
+          <label class="day-checkbox">
+            <input type="checkbox">
+            <span>Sun</span>
+          </label>
+        </div>
+      </div>
+      
+      <div class="control-group">
+        <div class="control-title">
+          <i class="fas fa-globe"></i>
+          <span>Website Restrictions:</span>
+        </div>
+        <select class="select-control">
+          <option>Disable</option>
+          <option>Block Social Media</option>
+          <option>Block Streaming</option>
+          <option>Custom Rules</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-cancel">
+      <i class="fas fa-times"></i> Cancel
+    </button>
+    <button class="btn btn-ok">
+      <i class="fas fa-check"></i> Save Settings
+    </button>
+  </div>
+</div>
+
+<script>
+// منو
+const menuToggleBtn = document.getElementById("menuToggleBtn");
+const mainMenu = document.getElementById("mainMenu");
+menuToggleBtn.addEventListener("click", () => {
+  mainMenu.classList.toggle("active");
+  document.body.style.overflow = mainMenu.classList.contains('active') ? 'hidden' : '';
+});
+
+// تغییر تم
+const themeToggle = document.getElementById('menuThemeToggle');
+const themeIcon = themeToggle.querySelector('i');
+const body = document.body;
+const savedTheme = localStorage.getItem('siteTheme');
+
+if(savedTheme){
+  body.setAttribute('data-theme', savedTheme);
+  themeIcon.className = savedTheme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
+}
+
+themeToggle.addEventListener('click', () => {
+  const current = body.getAttribute('data-theme') || 'light';
+  const next = current === 'light' ? 'dark' : 'light';
+  
+  body.setAttribute('data-theme', next);
+  themeIcon.className = next === 'light' ? 'fas fa-moon' : 'fas fa-sun';
+  localStorage.setItem('siteTheme', next);
+});
+
+// بستن منو با کلیک خارج از آن
+document.addEventListener('click', (e) => {
+  if (mainMenu.classList.contains('active') && 
+      !e.target.closest('#mainMenu') && 
+      !e.target.closest('#menuToggleBtn')) {
+    mainMenu.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+});
+
+// دکمه ذخیره
+document.querySelector('.btn-ok').addEventListener('click', () => {
+  const btn = document.querySelector('.btn-ok');
+  const originalText = btn.innerHTML;
+  
+  btn.innerHTML = '<i class="fas fa-check-circle"></i> Settings Saved!';
+  btn.style.background = 'linear-gradient(90deg, var(--success) 0%, #27ae60 100%)';
+  
+  setTimeout(() => {
+    btn.innerHTML = originalText;
+    btn.style.background = 'linear-gradient(90deg, var(--secondary) 0%, #ff8c42 100%)';
+  }, 2000);
+});
+
+// دکمه‌های ویرایش دستگاه
+const editButtons = document.querySelectorAll('.edit-btn');
+editButtons.forEach(btn => {
+  btn.addEventListener('click', function() {
+    const deviceName = this.closest('tr').querySelector('.device-name span').textContent;
+    const newName = prompt(`Enter new name for ${deviceName}:`, deviceName);
+    if (newName && newName.trim() !== '') {
+      this.closest('tr').querySelector('.device-name span').textContent = newName;
+    }
+  });
+});
+</script>
+
+</body>
+</html>

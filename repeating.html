@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Tenda Router - Internet Settings</title>
+<title>Tenda Router - Repeater Mode</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 :root {
@@ -35,7 +35,7 @@ body {
   color: var(--text-dark);
   line-height: 1.6;
   min-height: 100vh;
-  padding-bottom: 70px;
+  padding-bottom: 20px;
 }
 
 body[data-theme="dark"] {
@@ -189,35 +189,34 @@ nav ul li i {
   color: var(--secondary);
 }
 
-/* ===== باکس تنظیمات بهبود یافته ===== */
+/* ===== محتوای اصلی ===== */
 .container { 
   padding: 20px; 
-  max-width: 1200px;
+  max-width: 800px;
   margin: 0 auto;
 }
 
-.box {
+.card {
   background: var(--light);
   border: 1px solid var(--border-light);
   border-radius: 16px;
   padding: 25px;
-  max-width: 700px;
-  margin: 20px auto;
+  margin-bottom: 25px;
   box-shadow: var(--card-shadow);
   transition: var(--transition);
 }
 
-body[data-theme="dark"] .box {
+body[data-theme="dark"] .card {
   background: var(--dark);
   border: 1px solid var(--border-dark);
 }
 
-.box:hover {
+.card:hover {
   box-shadow: 0 5px 25px rgba(0, 0, 0, 0.12);
   transform: translateY(-2px);
 }
 
-.box h3 {
+.card h3 {
   margin-top: 0;
   font-size: 1.4rem;
   color: var(--secondary);
@@ -229,141 +228,113 @@ body[data-theme="dark"] .box {
   gap: 10px;
 }
 
-.box h3 i {
+.card h3 i {
   font-size: 1.6rem;
 }
 
-label { 
-  display: block; 
-  margin: 15px 0 8px; 
-  font-weight: 600;
-  color: var(--text-dark);
-}
-
-body[data-theme="dark"] label {
-  color: var(--text-light);
-}
-
-.radio-group {
+/* ===== حالت‌های Repeater ===== */
+.mode-options {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 15px;
-  margin: 10px 0;
 }
 
-.radio-option {
+.mode-option {
   display: flex;
   align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  padding: 10px 15px;
-  background: rgba(52, 152, 219, 0.1);
-  border-radius: 8px;
-  transition: var(--transition);
-}
-
-.radio-option:hover {
-  background: rgba(52, 152, 219, 0.2);
-}
-
-.radio-option input[type="radio"] {
-  margin: 0;
-  accent-color: var(--secondary);
-}
-
-input[type="text"], input[type="password"] {
-  width: 100%;
-  padding: 12px 45px 12px 15px;
-  border: 2px solid #ddd;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.5);
   border-radius: 10px;
-  font-size: 16px;
-  box-sizing: border-box;
   transition: var(--transition);
-}
-
-input[type="text"]:focus, input[type="password"]:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
-  outline: none;
-}
-
-.password-wrapper { 
-  position: relative; 
-  margin-bottom: 15px;
-}
-
-.password-wrapper .toggle-eye {
-  position: absolute;
-  right: 15px;
-  top: 50%;
-  transform: translateY(-50%);
   cursor: pointer;
-  font-size: 18px;
-  color: var(--gray);
-  transition: var(--transition);
-  background: none;
-  border: none;
-  padding: 5px;
+  border: 2px solid transparent;
 }
 
-.password-wrapper .toggle-eye:hover {
-  color: var(--primary);
-  transform: translateY(-50%) scale(1.1);
+body[data-theme="dark"] .mode-option {
+  background: rgba(255, 255, 255, 0.05);
 }
 
-.status { 
-  margin-top: 20px; 
-  padding: 12px 15px;
-  border-radius: 8px;
-  font-size: 15px;
+.mode-option:hover {
+  background: rgba(52, 152, 219, 0.1);
+  transform: translateX(5px);
+}
+
+.mode-option.active {
+  border-color: var(--primary);
+  background: rgba(52, 152, 219, 0.15);
+}
+
+.mode-option input[type="radio"] {
+  margin-right: 15px;
+  accent-color: var(--secondary);
+  transform: scale(1.2);
+}
+
+.mode-info {
+  flex: 1;
+}
+
+.mode-title {
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 5px;
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-.status.success { 
-  background: rgba(46, 204, 113, 0.15); 
-  color: #27ae60;
-  border-left: 4px solid #2ecc71;
+.mode-icon {
+  font-size: 1.3rem;
+  color: var(--primary);
 }
 
-.status.error { 
-  background: rgba(231, 76, 60, 0.15); 
-  color: #c0392b;
-  border-left: 4px solid #e74c3c;
+.mode-description {
+  font-size: 0.9rem;
+  color: var(--gray);
+  margin-left: 32px;
 }
 
-/* ===== دکمه سیو بهبود یافته ===== */
-.save-btn {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: linear-gradient(90deg, var(--secondary) 0%, #ff8c42 100%);
-  color: white;
+/* ===== دکمه‌ها ===== */
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 30px;
+}
+
+.btn {
+  padding: 12px 25px;
   border: none;
-  padding: 15px 25px;
   border-radius: 50px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 4px 15px rgba(242, 101, 34, 0.4);
-  transition: var(--transition);
   display: flex;
   align-items: center;
   gap: 8px;
-  z-index: 900;
+  transition: var(--transition);
 }
 
-.save-btn:hover {
+.btn:hover {
   transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(242, 101, 34, 0.5);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
-.save-btn:active {
+.btn:active {
   transform: translateY(0);
 }
 
-/* موبایل */
+.btn-ok {
+  background: linear-gradient(90deg, var(--secondary) 0%, #ff8c42 100%);
+  color: white;
+}
+
+.btn-cancel {
+  background: var(--gray);
+  color: white;
+}
+
+/* ===== رسپانسیو ===== */
 @media (max-width: 768px) {
   header .title {
     font-size: 1.2rem;
@@ -373,19 +344,22 @@ input[type="text"]:focus, input[type="password"]:focus {
     padding: 15px;
   }
   
-  .box { 
+  .card { 
     padding: 20px; 
-    margin: 15px 0; 
+    margin-bottom: 20px; 
   }
   
   nav {
     width: 85%;
   }
   
-  .save-btn {
-    bottom: 15px;
-    right: 15px;
-    padding: 12px 20px;
+  .actions {
+    flex-direction: column;
+  }
+  
+  .btn {
+    width: 100%;
+    justify-content: center;
   }
 }
 
@@ -398,35 +372,22 @@ input[type="text"]:focus, input[type="password"]:focus {
     font-size: 1.1rem;
   }
   
-  .box { 
+  .card { 
     padding: 18px; 
     border-radius: 14px;
   }
   
-  .radio-group {
-    flex-direction: column;
-    gap: 10px;
+  .mode-option {
+    padding: 12px;
+  }
+  
+  .mode-title {
+    font-size: 1rem;
   }
   
   nav ul li {
     padding: 12px 20px;
   }
-  
-  .save-btn {
-    font-size: 14px;
-    padding: 12px 18px;
-  }
-}
-
-/* انیمیشن برای تغییر تم */
-.theme-change {
-  animation: themeChange 0.5s ease;
-}
-
-@keyframes themeChange {
-  0% { opacity: 1; }
-  50% { opacity: 0.7; }
-  100% { opacity: 1; }
 }
 </style>
 </head>
@@ -434,8 +395,8 @@ input[type="text"]:focus, input[type="password"]:focus {
 
 <header>
   <div class="title">
-    <i class="fas fa-wifi"></i>
-    <span>Tenda Router</span>
+    <i class="fas fa-retweet"></i>
+    <span>Tenda Router - Repeater Settings</span>
   </div>
   <div class="controls">
     <div class="theme-toggle" id="menuThemeToggle">
@@ -462,45 +423,73 @@ input[type="text"]:focus, input[type="password"]:focus {
 </nav>
 
 <div class="container">
-  <div class="box">
-    <h3><i class="fas fa-globe"></i> Internet Settings</h3>
-
-    <label>Connection Type</label>
-    <div class="radio-group">
-      <label class="radio-option">
-        <input type="radio" name="connection" checked> 
-        <i class="fas fa-network-wired"></i> PPPoE
+  <div class="card fade-in">
+    <h3><i class="fas fa-retweet"></i> Repeater Mode</h3>
+    
+    <div class="mode-options">
+      <label class="mode-option active">
+        <input type="radio" name="repeater" checked>
+        <div class="mode-info">
+          <div class="mode-title">
+            <i class="fas fa-times-circle mode-icon"></i>
+            <span>Disable</span>
+          </div>
+          <div class="mode-description">
+            Turn off repeater functionality
+          </div>
+        </div>
       </label>
-      <label class="radio-option">
-        <input type="radio" name="connection"> 
-        <i class="fas fa-bolt"></i> Dynamic IP
+      
+      <label class="mode-option">
+        <input type="radio" name="repeater">
+        <div class="mode-info">
+          <div class="mode-title">
+            <i class="fas fa-wifi mode-icon"></i>
+            <span>WISP (Wireless ISP) Mode</span>
+          </div>
+          <div class="mode-description">
+            Connect to a wireless network as a client and share the connection
+          </div>
+        </div>
       </label>
-      <label class="radio-option">
-        <input type="radio" name="connection"> 
-        <i class="fas fa-ethernet"></i> Static IP
+      
+      <label class="mode-option">
+        <input type="radio" name="repeater">
+        <div class="mode-info">
+          <div class="mode-title">
+            <i class="fas fa-expand-arrows-alt mode-icon"></i>
+            <span>Universal Repeater</span>
+          </div>
+          <div class="mode-description">
+            Extend the range of an existing wireless network
+          </div>
+        </div>
       </label>
-    </div>
-
-    <label for="username">User Name</label>
-    <input type="text" id="username" value="600333">
-
-    <label for="password">Password</label>
-    <div class="password-wrapper">
-      <input type="password" id="password" value="123456">
-      <button class="toggle-eye" id="toggleEye">
-        <i class="fas fa-eye"></i>
-      </button>
-    </div>
-
-    <div class="status success">
-      <i class="fas fa-check-circle"></i> You can surf the Internet
+      
+      <label class="mode-option">
+        <input type="radio" name="repeater">
+        <div class="mode-info">
+          <div class="mode-title">
+            <i class="fas fa-broadcast-tower mode-icon"></i>
+            <span>AP (Access Point) Mode</span>
+          </div>
+          <div class="mode-description">
+            Create a new wireless access point using a wired connection
+          </div>
+        </div>
+      </label>
     </div>
   </div>
-</div>
 
-<button class="save-btn" id="saveBtn">
-  <i class="fas fa-save"></i> Save Settings
-</button>
+  <div class="actions">
+    <button class="btn btn-cancel">
+      <i class="fas fa-times"></i> Cancel
+    </button>
+    <button class="btn btn-ok">
+      <i class="fas fa-check"></i> Save Settings
+    </button>
+  </div>
+</div>
 
 <script>
 // منو
@@ -523,47 +512,12 @@ if(savedTheme){
 }
 
 themeToggle.addEventListener('click', () => {
-  body.classList.add('theme-change');
   const current = body.getAttribute('data-theme') || 'light';
   const next = current === 'light' ? 'dark' : 'light';
   
   body.setAttribute('data-theme', next);
   themeIcon.className = next === 'light' ? 'fas fa-moon' : 'fas fa-sun';
   localStorage.setItem('siteTheme', next);
-  
-  setTimeout(() => {
-    body.classList.remove('theme-change');
-  }, 500);
-});
-
-// نمایش/مخفی پسورد
-const toggleEye = document.getElementById('toggleEye');
-const eyeIcon = toggleEye.querySelector('i');
-const passwordInput = document.getElementById('password');
-
-toggleEye.addEventListener('click', () => {
-  const type = passwordInput.getAttribute('type');
-  if (type === 'password') {
-    passwordInput.setAttribute('type', 'text');
-    eyeIcon.className = 'fas fa-eye-slash';
-  } else {
-    passwordInput.setAttribute('type', 'password');
-    eyeIcon.className = 'fas fa-eye';
-  }
-});
-
-// دکمه سیو
-document.getElementById('saveBtn').addEventListener('click', () => {
-  const btn = document.getElementById('saveBtn');
-  const originalText = btn.innerHTML;
-  
-  btn.innerHTML = '<i class="fas fa-check"></i> Saved!';
-  btn.style.background = 'linear-gradient(90deg, #2ecc71 0%, #27ae60 100%)';
-  
-  setTimeout(() => {
-    btn.innerHTML = originalText;
-    btn.style.background = 'linear-gradient(90deg, var(--secondary) 0%, #ff8c42 100%)';
-  }, 2000);
 });
 
 // بستن منو با کلیک خارج از آن
@@ -574,6 +528,30 @@ document.addEventListener('click', (e) => {
     mainMenu.classList.remove('active');
     document.body.style.overflow = '';
   }
+});
+
+// حالت‌های repeater
+const modeOptions = document.querySelectorAll('.mode-option');
+modeOptions.forEach(option => {
+  option.addEventListener('click', () => {
+    modeOptions.forEach(opt => opt.classList.remove('active'));
+    option.classList.add('active');
+    option.querySelector('input[type="radio"]').checked = true;
+  });
+});
+
+// دکمه ذخیره
+document.querySelector('.btn-ok').addEventListener('click', () => {
+  const btn = document.querySelector('.btn-ok');
+  const originalText = btn.innerHTML;
+  
+  btn.innerHTML = '<i class="fas fa-check-circle"></i> Settings Saved!';
+  btn.style.background = 'linear-gradient(90deg, var(--success) 0%, #27ae60 100%)';
+  
+  setTimeout(() => {
+    btn.innerHTML = originalText;
+    btn.style.background = 'linear-gradient(90deg, var(--secondary) 0%, #ff8c42 100%)';
+  }, 2000);
 });
 </script>
 
