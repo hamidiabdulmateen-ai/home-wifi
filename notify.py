@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, render_template
 import requests
 
 app = Flask(__name__)
@@ -10,6 +10,10 @@ def send_to_telegram(message: str):
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
     data = {"chat_id": CHAT_ID, "text": message}
     requests.post(url, data=data)
+
+@app.route("/")
+def index():
+    return render_template("index.html")   # فایل صفحه اصلی
 
 @app.route("/notify")
 def notify():
