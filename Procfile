@@ -1,1 +1,2 @@
-web: python notify.py
+web: gunicorn notify:app
+
