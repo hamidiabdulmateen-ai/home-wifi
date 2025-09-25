@@ -1,3 +1,471 @@
+<!DOCTYPE html>html>
+<html lang="en">"en">
+<head>head>
+<meta charset="UTF-8" />8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>.0"/>
+<title>Tenda Router - Connected Devices</title>itle>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">css">
+<style>tyle>
+:root {oot {
+  --primary: #3498db;98db;
+  --secondary: #f26522;6522;
+  --success: #2ecc71;cc71;
+  --warning: #f39c12;9c12;
+  --danger: #e74c3c;4c3c;
+  --dark: #2c3e50;3e50;
+  --light: #ecf0f1;f0f1;
+  --gray: #95a5a6;a5a6;
+  --text-dark: #2c3e50;3e50;
+  --text-light: #f9f9f9;f9f9;
+  --border-light: #ddd;#ddd;
+  --border-dark: #555;#555;
+  --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);.08);
+  --transition: all 0.3s ease;ease;
+}
+e;
+}
+
+* {
+
+* {
+  margin: 0;n: 0;
+  padding: 0;g: 0;
+  box-sizing: border-box;-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;erif;
+}
+f;
+}
+
+body {ody {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);00%);
+  color: var(--text-dark);ark);
+  line-height: 1.6;
+  min-height: 100vh;
+  padding-bottom: 20px;
+}
+
+body[data-theme="dark"] {
+  background: linear-gradient(135deg, #2c3e50 0%, #1a2530 100%);
+  color: var(--text-light);
+}
+
+/* ===== هدر بهبود یافته ===== */
+header {
+  background: linear-gradient(90deg, var(--secondary) 0%, #ff8c42 100%);
+  color: white;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 0 0 12px 12px;
+}
+
+header .title {
+  font-weight: 700;
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+header .title i {
+  font-size: 1.6rem;
+}
+
+header .controls {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+header .menu-toggle {
+  cursor: pointer;
+  font-size: 1.5rem;
+  background: rgba(255, 255, 255, 0.2);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+
+header .menu-toggle:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
+}
+
+header .theme-toggle {
+  cursor: pointer;
+  font-size: 1.3rem;
+  background: rgba(255, 255, 255, 0.2);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+
+header .theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+/* ===== منوی بهبود یافته ===== */
+nav {
+  position: fixed;
+  top: 70px;
+  right: -100%;
+  width: 80%;
+  max-width: 300px;
+  height: calc(100vh - 70px);
+  background: var(--light);
+  box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+  transition: right 0.3s ease-in-out;
+  overflow-y: auto;
+  z-index: 1000;
+  border-left: 1px solid var(--border-light);
+  padding: 20px 0;
+}
+
+body[data-theme="dark"] nav {
+  background: var(--dark);
+  border-left: 1px solid var(--border-dark);
+}
+
+nav.active { 
+  right: 0; 
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from { right: -100%; }
+  to { right: 0; }
+}
+
+nav ul { 
+  list-style: none; 
+  padding: 0; 
+  margin: 0; 
+}
+
+nav ul li {
+  padding: 15px 25px;
+  border-bottom: 1px solid var(--border-light);
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+body[data-theme="dark"] nav ul li {
+  border-bottom: 1px solid var(--border-dark);
+}
+
+nav ul li:hover {
+  background: rgba(52, 152, 219, 0.1);
+  padding-right: 30px;
+}
+
+nav ul li a {
+  text-decoration: none;
+  color: var(--text-dark);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+}
+
+body[data-theme="dark"] nav ul li a {
+  color: var(--text-light);
+}
+
+nav ul li i {
+  font-size: 1.2rem;
+  width: 24px;
+  text-align: center;
+  color: var(--secondary);
+}
+
+/* ===== محتوای اصلی ===== */
+.container { 
+  padding: 20px; 
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.device-count {
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+  padding: 12px 15px;
+  background: var(--light);
+  border-radius: 10px;
+  box-shadow: var(--card-shadow);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  color:
+var(--secondary);
+}
+
+body[data-them
+me="dar
+.actions button {
+    padding: 5px 10px;
+    font-size: 0.8rem;
+  }
+}
+</style>
+</head>
+<body data-theme="light">
+
+<header>
+  <div class="title">
+    <i class="fas fa-wifi"></i>
+    <span>Tenda Router</span>
+  </div>
+  <div class="controls">
+    <div class="theme-toggle" id="menuThemeToggle">
+      <i class="fas fa-moon"></i>
+    </div>
+    <div class="menu-toggle" id="menuToggleBtn">
+      <i class="fas fa-bars"></i>
+    </div>
+  </div>
+</header>
+
+<nav id="mainMenu">
+    <ul>
+        <li><a href="status.html"><i class="fas fa-chart-bar"></i> Status</a></li>
+        <li><a href="Internet.html"><i class="fas fa-globe"></i> Internet</a></li>
+        <li><a href="wireless.html"><i class="fas fa-wifi"></i> Wireless</a></li>
+        <li><a href="bandwidth.html"><i class="fas fa-tachometer-alt"></i> Bandwidth</a></li> 
+        <li><a href="repeating.html"><i class="fas fa-retweet"></i> Repeating</a></li>
+        <li><a href="prantal.html"><i class="fas fa-user-shield"></i> Parental</a></li>
+        <li><a href="advanced.html"><i class="fas fa-cogs"></i> Advanced</a></li>
+        <li><a href="security.html"><i class="fas fa-shield-alt"></i> Security</a></li>
+        <li><a href="admin.html"><i class="fas fa-user-cog"></i> Admin</a></li>
+    </ul>
+</nav>
+<div class="container">
+  <div class="device-count fade-in" id="deviceCount">
+    <i class="fas fa-laptop"></i>
+    <span>Total Connected Devices: 12</span>
+  </div>
+
+  <div class="box fade-in" id="connectedBox">
+    <h3><i class="fas fa-network-wired"></i> Connected Devices</h3>
+    <div id="connectedDevices"></div>
+  </div>
+
+  <div class="box fade-in" id="blockedBox">
+    <h3><i class="fas fa-ban"></i> Blocked Devices</h3>
+    <div id="blockedDevices"></div>
+  </div>
+</div>
+
+<script>
+const connectedDevicesEl = document.getElementById("connectedDevices");
+const blockedDevicesEl = document.getElementById("blockedDevices");
+const deviceCountEl = document.getElementById("deviceCount");
+
+// Menu toggle
+const menuToggleBtn = document.getElementById("menuToggleBtn");
+const mainMenu = document.getElementById("mainMenu");
+menuToggleBtn.addEventListener("click", () => {
+  mainMenu.classList.toggle("active");
+  document.body.style.overflow = mainMenu.classList.contains('active') ? 'hidden' : '';
+});
+
+// تغییر تم
+const themeToggle = document.getElementById('menuThemeToggle');
+const themeIcon = themeToggle.querySelector('i');
+const body = document.body;
+const savedTheme = localStorage.getItem('siteTheme');
+
+if(savedTheme){
+  body.setAttribute('data-theme', savedTheme);
+  themeIcon.className = savedTheme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
+}
+
+themeToggle.addEventListener('click', () => {
+  const current = body.getAttribute('data-theme') || 'light';
+  const next = current === 'light' ? 'dark' : 'light';
+  
+  body.setAttribute('data-theme', next);
+  themeIcon.className = next === 'light' ? 'fas fa-moon' : 'fas fa-sun';
+  localStorage.setItem('siteTheme', next);
+});
+
+// Helper functions
+function randomIP(){ 
+  return `${Math.floor(Math.random()*256)}.${Math.floor(Math.random()*256)}.${Math.floor(Math.random()*256)}.${Math.floor(Math.random()*256)}`; 
+}
+
+function randomUsage(){ 
+  const b = Math.floor(Math.random()*(2000-200+1)+200); 
+  return b < 1000 ? b + " KB" : (b/1000).toFixed(2) + " MB"; 
+}
+
+function randomSpeed(){ 
+  return `${Math.floor(Math.random()*100)+1} Mbps`; 
+}
+
+function getDeviceIcon(deviceName) {
+  if (deviceName.includes('IPHONE') || deviceName.includes('IPHOEN')) return 'mobile-alt';
+  if (deviceName.includes('SAMSUNG')) return 'mobile';
+  if (deviceName.includes('LG')) return 'mobile';
+  if (deviceName.includes('HAWAWI')) return 'mobile';
+  if (deviceName.includes('INFINIX')) return 'mobile';
+  return 'laptop';
+}
+
+// Initial devices
+let connectedDevices = [
+  {name:"IPHONE X", ip:randomIP()},
+  {name:"IPHONE 8", ip:randomIP()},
+  {name:"IPHONE 8", ip:randomIP()},
+  {name:"IPHONE 7", ip:randomIP()},
+  {name:"HAWAWI", ip:randomIP()},
+  {name:"A 23 SAMSUNG", ip:randomIP()},
+  {name:"SAMSUNG", ip:randomIP()},
+  {name:"IPHONE 11", ip:randomIP()},
+  {name:"IPHONE 11
+e:"IPHONE 11 PRO MAX", ip:randomIP()},
+  {name:"IPHOEN 13 PRO", ip:randomIP()},
+  {name:"LG K", ip:randomIP()},
+  {name:"INFINIX", ip:randomIP()}
+];
+let blockedDevices = [
+{name:"basit rahmani", ip:randomIP()},
+{name:"xiaomi redmi", ip:randomIP()}
+];
+
+// Render functions
+function renderDevices(){
+  connectedDevicesEl.innerHTML = "";
+  connectedDevices.forEach((device, index) => {
+    const div = document.createElement("div"); 
+    div.className = "device fade-in";
+    div.style.animationDelay = `${index * 0.05}s`;
+
+    const header = document.createElement("div"); 
+    header.className = "device-header";
+
+    const deviceInfo = document.createElement("div");
+    deviceInfo.className = "device-info";
+    
+    const nameSpan = document.createElement("div"); 
+    nameSpan.className = "device-name";
+    
+    const deviceIcon = document.createElement("i");
+    deviceIcon.className = `fas fa-${getDeviceIcon(device.name)}`;
+    nameSpan.appendChild(deviceIcon);
+    
+    const nameText = document.createTextNode(device.name);
+    nameSpan.appendChild(nameText);
+
+    const statsDiv = document.createElement("div");
+    statsDiv.className = "device-stats";
+    
+    const usageSpan = document.createElement("div");
+    usageSpan.className = "stat-item";
+    usageSpan.innerHTML = <i class="fas fa-download"></i> Usage: ${randomUsage()};
+    
+    const speedSpan = document.createElement("div");
+    speedSpan.className = "stat-item";
+    speedSpan.innerHTML = <i class="fas fa-tachometer-alt"></i> Speed: ${randomSpeed()};
+    
+    statsDiv.appendChild(usageSpan);
+    statsDiv.appendChild(speedSpan);
+
+    deviceInfo.appendChild(nameSpan);
+    deviceInfo.appendChild(statsDiv);
+
+    const actionSpan = document.createElement("div"); 
+    actionSpan.className = "actions";
+    actionSpan.innerHTML = `
+      <button class="block" onclick="blockDevice(${index})">
+        <i class="fas fa-ban"></i> Block
+      </button>
+      <button class="rename" onclick="renameDevice(${index})">
+        <i class="fas fa-edit"></i> Rename
+      </button>
+    `;
+
+    header.appendChild(deviceInfo);
+    header.appendChild(actionSpan);
+
+    const ipDiv = document.createElement("div"); 
+    ipDiv.className = "device-ip"; 
+    ipDiv.innerHTML = <i class="fas fa-network-wired"></i> IP: ${device.ip};
+
+    div.appendChild(header); 
+    div.appendChild(ipDiv);
+    connectedDevicesEl.appendChild(div);
+  });
+  
+  deviceCountEl.innerHTML = <i class="fas fa-laptop"></i> Total Connected Devices: ${connectedDevices.length};
+}
+
+function renderBlocked(){
+  blockedDevicesEl.innerHTML = "";
+  
+  if (blockedDevices.length === 0) {
+    blockedDevicesEl.innerHTML = `
+      <div style="text-align: center; padding: 20px; color: var(--gray);">
+        <i class="fas fa-ban" style="font-size: 2rem; margin-bottom: 10px;"></i>
+        <p>No blocked devices</p>
+      </div>
+    `;
+    return;
+  }
+  
+  blockedDevices.forEach((device, index) => {
+    const div = document.createElement("div"); 
+    div.className = "device blocked-device fade-in";
+    div.style.animationDelay = ${index * 0.05}s;
+
+    const header = document.createElement("div"); 
+    header.className = "device-header";
+
+    const deviceInfo = document.createElement("div");
+    deviceInfo.className = "device-info";
+    
+    const nameSpan = document.createElement("div"); 
+    nameSpan.className = "device-name";
+    
+    const deviceIcon = document.createElement("i");
+    deviceIcon.className = fas fa-${getDeviceIcon(device.name)};
+    nameSpan.appendChild(deviceIcon);
+    
+    const nameText = document.createTextNode(device.name);
+    nameSpan.appendChild(nameText);
+
+    deviceInfo.appendChild(nameSpan);
+
+    const actionSpan = document.createElement("div"); 
+    actionSpan.className = "actions";
+    actionSpan.innerHTML = `
+      <button class="remove" onclick="removeBlocked(${index})">
+        <i class="fas fa-trash-alt"></i> Remove
+      </button>
+    `;
+
+    header.appendChild(deviceInfo);
+    header.appendChild(actionSpan);
+
+    const ipDiv = document.createElement("div"); 
+    ipDiv.className = "device-ip";
 ipDiv.innerHTML = `<i class="fas fa-network-wired"></i> IP: ${device.ip}`;
 
     div.appendChild(header); 
