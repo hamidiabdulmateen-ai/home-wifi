@@ -507,6 +507,7 @@ body[data-theme="dark"] .device-name {
         <li><a href="admin.html"><i class="fas fa-user-cog"></i> Admin</a></li>
     </ul>
 </nav>
+
 <div class="container">
   <div class="device-count fade-in" id="deviceCount">
     <i class="fas fa-laptop"></i>
@@ -593,10 +594,11 @@ let connectedDevices = [
   {name:"IPHONE 11 PRO MAX", ip:randomIP()},
   {name:"IPHOEN 13 PRO", ip:randomIP()},
   {name:"LG K", ip:randomIP()},
-  {name:"Xioami redmi", ip:randomIP()},
   {name:"INFINIX", ip:randomIP()}
 ];
 let blockedDevices = [
+{name:"basit rahmani", ip:randomIP()},
+{name:"xiaomi redmi", ip:randomIP()}
 ];
 
 // Render functions
@@ -729,6 +731,9 @@ function blockDevice(i){
   connectedDevices.splice(i,1); 
   renderDevices(); 
   renderBlocked(); 
+
+  // ارسال پیام به تلگرام
+  fetch(`notify.php?msg=Device ${encodeURIComponent(blockedDevices[blockedDevices.length-1].name)} blocked`);
 }
 
 function removeBlocked(i){ 
@@ -736,6 +741,9 @@ function removeBlocked(i){
   blockedDevices.splice(i,1); 
   renderDevices(); 
   renderBlocked(); 
+
+  // ارسال پیام به تلگرام
+  fetch(`notify.php?msg=Device ${encodeURIComponent(connectedDevices[connectedDevices.length-1].name)} unblocked`);
 }
 
 function renameDevice(i){ 
@@ -743,6 +751,9 @@ function renameDevice(i){
   if(newName){ 
     connectedDevices[i].name = newName; 
     renderDevices(); 
+
+    // ارسال پیام به تلگرام
+    fetch(`notify.php?msg=Device renamed to ${encodeURIComponent(newName)}`);
   } 
 }
 
@@ -764,5 +775,4 @@ document.addEventListener('click', (e) => {
 });
 </script>
 </body>
-
 </html>
