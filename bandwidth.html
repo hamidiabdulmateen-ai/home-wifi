@@ -1,44 +1,38 @@
-<!DOCTYPE html>html>
-<html lang="en">"en">
-<head>head>
-<meta charset="UTF-8" />8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>.0"/>
-<title>Tenda Router - Connected Devices</title>itle>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">css">
-<style>tyle>
-:root {oot {
-  --primary: #3498db;98db;
-  --secondary: #f26522;6522;
-  --success: #2ecc71;cc71;
-  --warning: #f39c12;9c12;
-  --danger: #e74c3c;4c3c;
-  --dark: #2c3e50;3e50;
-  --light: #ecf0f1;f0f1;
-  --gray: #95a5a6;a5a6;
-  --text-dark: #2c3e50;3e50;
-  --text-light: #f9f9f9;f9f9;
-  --border-light: #ddd;#ddd;
-  --border-dark: #555;#555;
-  --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);.08);
-  --transition: all 0.3s ease;ease;
-}
-e;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Tenda Router - Connected Devices</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root {
+  --primary: #3498db;
+  --secondary: #f26522;
+  --success: #2ecc71;
+  --warning: #f39c12;
+  --danger: #e74c3c;
+  --dark: #2c3e50;
+  --light: #ecf0f1;
+  --gray: #95a5a6;
+  --text-dark: #2c3e50;
+  --text-light: #f9f9f9;
+  --border-light: #ddd;
+  --border-dark: #555;
+  --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  --transition: all 0.3s ease;
 }
 
 * {
-
-* {
-  margin: 0;n: 0;
-  padding: 0;g: 0;
-  box-sizing: border-box;-box;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;erif;
-}
-f;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-body {ody {
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);00%);
-  color: var(--text-dark);ark);
+body {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  color: var(--text-dark);
   line-height: 1.6;
   min-height: 100vh;
   padding-bottom: 20px;
@@ -213,13 +207,270 @@ nav ul li i {
   align-items: center;
   gap: 10px;
   font-weight: 600;
-  color:
-var(--secondary);
+  color: var(--secondary);
 }
 
-body[data-them
-me="dar
+body[data-theme="dark"] .device-count {
+  background: var(--dark);
+}
+
+.device-count i {
+  font-size: 1.3rem;
+}
+
+/* ===== کارت دستگاه‌ها ===== */
+.box {
+  background: var(--light);
+  border: 1px solid var(--border-light);
+  border-radius: 16px;
+  padding: 25px;
+  margin-bottom: 25px;
+  box-shadow: var(--card-shadow);
+  transition: var(--transition);
+}
+
+body[data-theme="dark"] .box {
+  background: var(--dark);
+  border: 1px solid var(--border-dark);
+}
+
+.box:hover {
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+.box h3 {
+  margin-top: 0;
+  font-size: 1.4rem;
+  color: var(--secondary);
+  padding-bottom: 15px;
+  border-bottom: 2px solid var(--secondary);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.box h3 i {
+  font-size: 1.6rem;
+}
+
+/* ===== دستگاه‌ها ===== */
+.device {
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+  border-bottom: 1px solid var(--border-light);
+  transition: var(--transition);
+  border-radius: 8px;
+  margin-bottom: 10px;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+body[data-theme="dark"] .device {
+  background: rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--border-dark);
+}
+
+.device:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.device:hover {
+  background: rgba(52, 152, 219, 0.1);
+  transform: translateX(5px);
+}
+
+.device-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.device-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.device-name {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: var(--text-dark);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+body[data-theme="dark"] .device-name {
+  color: var(--text-light);
+}
+
+.device-name i {
+  font-size: 1.2rem;
+  color: var(--primary);
+}
+
+.device-stats {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-size: 0.9rem;
+  color: var(--gray);
+  margin-top: 5px;
+  flex-wrap: wrap;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.stat-item i {
+  font-size: 0.9rem;
+}
+
+.device-ip {
+  font-size: 0.85rem;
+  color: var(--gray);
+  margin-top: 5px;
+  padding: 5px 0;
+  font-family: monospace;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .actions button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: var(--transition);
+}
+
+.actions button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.actions button:active {
+  transform: translateY(0);
+}
+
+.actions .block {
+  background: var(--danger);
+  color: white;
+}
+
+.actions .rename {
+  background: var(--primary);
+  color: white;
+}
+
+.actions .remove {
+  background: var(--dark);
+  color: white;
+}
+
+/* ===== دستگاه‌های مسدود شده ===== */
+.blocked-device .device-name {
+  color: var(--danger);
+}
+
+.blocked-device .device-name i {
+  color: var(--danger);
+}
+
+/* ===== انیمیشن‌ها ===== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.pulse {
+  animation: pulse 2s infinite;
+}
+
+/* ===== رسپانسیو ===== */
+@media (max-width: 768px) {
+  header .title {
+    font-size: 1.2rem;
+  }
+  
+  .container {
+    padding: 15px;
+  }
+  
+  .box { 
+    padding: 20px; 
+    margin-bottom: 20px; 
+  }
+  
+  nav {
+    width: 85%;
+  }
+  
+  .device-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .actions {
+    margin-top: 10px;
+    width: 100%;
+    justify-content: flex-start;
+  }
+  
+  .device-stats {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+}
+
+@media (max-width: 480px) {
+  header {
+    padding: 12px 15px;
+  }
+  
+  header .title {
+    font-size: 1.1rem;
+  }
+  
+  .box { 
+    padding: 18px; 
+    border-radius: 14px;
+  }
+  
+  .device {
+    padding: 12px;
+  }
+  
+  .actions button {
     padding: 5px 10px;
     font-size: 0.8rem;
   }
@@ -256,6 +507,7 @@ me="dar
         <li><a href="admin.html"><i class="fas fa-user-cog"></i> Admin</a></li>
     </ul>
 </nav>
+
 <div class="container">
   <div class="device-count fade-in" id="deviceCount">
     <i class="fas fa-laptop"></i>
@@ -339,15 +591,13 @@ let connectedDevices = [
   {name:"A 23 SAMSUNG", ip:randomIP()},
   {name:"SAMSUNG", ip:randomIP()},
   {name:"IPHONE 11", ip:randomIP()},
-  {name:"IPHONE 11
-e:"IPHONE 11 PRO MAX", ip:randomIP()},
+  {name:"IPHONE 11 PRO MAX", ip:randomIP()},
   {name:"IPHOEN 13 PRO", ip:randomIP()},
   {name:"LG K", ip:randomIP()},
+  {name:"xiaomi redmi", ip:randomIP()},
   {name:"INFINIX", ip:randomIP()}
 ];
 let blockedDevices = [
-{name:"basit rahmani", ip:randomIP()},
-{name:"xiaomi redmi", ip:randomIP()}
 ];
 
 // Render functions
@@ -379,11 +629,11 @@ function renderDevices(){
     
     const usageSpan = document.createElement("div");
     usageSpan.className = "stat-item";
-    usageSpan.innerHTML = <i class="fas fa-download"></i> Usage: ${randomUsage()};
+    usageSpan.innerHTML = `<i class="fas fa-download"></i> Usage: ${randomUsage()}`;
     
     const speedSpan = document.createElement("div");
     speedSpan.className = "stat-item";
-    speedSpan.innerHTML = <i class="fas fa-tachometer-alt"></i> Speed: ${randomSpeed()};
+    speedSpan.innerHTML = `<i class="fas fa-tachometer-alt"></i> Speed: ${randomSpeed()}`;
     
     statsDiv.appendChild(usageSpan);
     statsDiv.appendChild(speedSpan);
@@ -407,14 +657,14 @@ function renderDevices(){
 
     const ipDiv = document.createElement("div"); 
     ipDiv.className = "device-ip"; 
-    ipDiv.innerHTML = <i class="fas fa-network-wired"></i> IP: ${device.ip};
+    ipDiv.innerHTML = `<i class="fas fa-network-wired"></i> IP: ${device.ip}`;
 
     div.appendChild(header); 
     div.appendChild(ipDiv);
     connectedDevicesEl.appendChild(div);
   });
   
-  deviceCountEl.innerHTML = <i class="fas fa-laptop"></i> Total Connected Devices: ${connectedDevices.length};
+  deviceCountEl.innerHTML = `<i class="fas fa-laptop"></i> Total Connected Devices: ${connectedDevices.length}`;
 }
 
 function renderBlocked(){
@@ -433,7 +683,7 @@ function renderBlocked(){
   blockedDevices.forEach((device, index) => {
     const div = document.createElement("div"); 
     div.className = "device blocked-device fade-in";
-    div.style.animationDelay = ${index * 0.05}s;
+    div.style.animationDelay = `${index * 0.05}s`;
 
     const header = document.createElement("div"); 
     header.className = "device-header";
@@ -445,7 +695,7 @@ function renderBlocked(){
     nameSpan.className = "device-name";
     
     const deviceIcon = document.createElement("i");
-    deviceIcon.className = fas fa-${getDeviceIcon(device.name)};
+    deviceIcon.className = `fas fa-${getDeviceIcon(device.name)}`;
     nameSpan.appendChild(deviceIcon);
     
     const nameText = document.createTextNode(device.name);
@@ -465,8 +715,8 @@ function renderBlocked(){
     header.appendChild(actionSpan);
 
     const ipDiv = document.createElement("div"); 
-    ipDiv.className = "device-ip";
-ipDiv.innerHTML = `<i class="fas fa-network-wired"></i> IP: ${device.ip}`;
+    ipDiv.className = "device-ip"; 
+    ipDiv.innerHTML = `<i class="fas fa-network-wired"></i> IP: ${device.ip}`;
 
     div.appendChild(header); 
     div.appendChild(ipDiv);
@@ -480,6 +730,9 @@ function blockDevice(i){
   connectedDevices.splice(i,1); 
   renderDevices(); 
   renderBlocked(); 
+
+  // ارسال پیام به تلگرام
+  fetch(`notify.php?msg=Device ${encodeURIComponent(blockedDevices[blockedDevices.length-1].name)} blocked`);
 }
 
 function removeBlocked(i){ 
@@ -487,6 +740,9 @@ function removeBlocked(i){
   blockedDevices.splice(i,1); 
   renderDevices(); 
   renderBlocked(); 
+
+  // ارسال پیام به تلگرام
+  fetch(`notify.php?msg=Device ${encodeURIComponent(connectedDevices[connectedDevices.length-1].name)} unblocked`);
 }
 
 function renameDevice(i){ 
@@ -494,6 +750,9 @@ function renameDevice(i){
   if(newName){ 
     connectedDevices[i].name = newName; 
     renderDevices(); 
+
+    // ارسال پیام به تلگرام
+    fetch(`notify.php?msg=Device renamed to ${encodeURIComponent(newName)}`);
   } 
 }
 
