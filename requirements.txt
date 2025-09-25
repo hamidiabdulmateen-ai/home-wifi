@@ -1,0 +1,3 @@
+notify.py
+requirements.txt
+(فایل‌های html مثل index.html و ... که مربوط به سایتت هستن)

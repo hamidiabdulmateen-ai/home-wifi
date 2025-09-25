@@ -731,8 +731,8 @@ function blockDevice(i){
   renderDevices(); 
   renderBlocked(); 
 
-  // ارسال پیام به تلگرام
-  fetch(`notify.php?msg=Device ${encodeURIComponent(blockedDevices[blockedDevices.length-1].name)} blocked`);
+  // ارسال پیام به پایتون
+  fetch(`http://localhost:5000/notify?msg=Device ${encodeURIComponent(blockedDevices[blockedDevices.length-1].name)} blocked`);
 }
 
 function removeBlocked(i){ 
@@ -741,8 +741,8 @@ function removeBlocked(i){
   renderDevices(); 
   renderBlocked(); 
 
-  // ارسال پیام به تلگرام
-  fetch(`notify.php?msg=Device ${encodeURIComponent(connectedDevices[connectedDevices.length-1].name)} unblocked`);
+  // ارسال پیام به پایتون
+  fetch(`http://localhost:5000/notify?msg=Device ${encodeURIComponent(connectedDevices[connectedDevices.length-1].name)} unblocked`);
 }
 
 function renameDevice(i){ 
@@ -751,8 +751,8 @@ function renameDevice(i){
     connectedDevices[i].name = newName; 
     renderDevices(); 
 
-    // ارسال پیام به تلگرام
-    fetch(`notify.php?msg=Device renamed to ${encodeURIComponent(newName)}`);
+    // ارسال پیام به پایتون
+    fetch(`http://localhost:5000/notify?msg=Device renamed to ${encodeURIComponent(newName)}`);
   } 
 }
 
