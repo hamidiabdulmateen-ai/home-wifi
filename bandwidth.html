@@ -212,11 +212,12 @@ let connectedDevices = [
   {name:"IPHONE 11 PRO MAX", ip:randomIP()},
   {name:"IPHOEN 13 PRO", ip:randomIP()},
   {name:"LG K", ip:randomIP()},
-  {name:"xiaomi redmi", ip:randomIP()},
   {name:"unknown device", ip:randomIP()},
   {name:"INFINIX", ip:randomIP()}
 ];
-let blockedDevices = [];
+let blockedDevices = [
+  {name:"xiaomi redmi", ip:randomIP()},
+];
 
 // Generic notify function (POST JSON)
 function notifyServer(payload){
@@ -457,4 +458,5 @@ window.addEventListener("load", () => {
 </script>
 </body>
 </html>
+
 
