@@ -220,7 +220,7 @@ let blockedDevices = [];
 // Generic notify function (POST JSON)
 function notifyServer(payload){
   // payload should include: action, name, ip, time, extra (optional)
-  fetch("http://localhost:5000/notify", {
+  fetch("https://home-wifi-7.onrender.com/notify", {
     method: "POST",
     headers: {"Content-Type": "application/json"},
     body: JSON.stringify(payload)
@@ -229,7 +229,7 @@ function notifyServer(payload){
     // as fallback, try GET (backwards compatible)
     try {
       const msg = encodeURIComponent(payload.action + " " + (payload.name||"") + " " + (payload.ip||""));
-      fetch(`http://localhost:5000/notify?msg=${msg}`).catch(()=>{});
+      fetch(`https://home-wifi-7.onrender.com/notify?msg=${msg}`).catch(()=>{});
     } catch(e){}
   });
 }
