@@ -754,6 +754,30 @@ document.querySelector('.btn-ok').addEventListener('click', () => {
     btn.style.background = 'linear-gradient(90deg, var(--secondary) 0%, #ff8c42 100%)';
   }, 2000);
 });
+
+(function(){
+  let timer;
+
+  function redirect() {
+    // اگر همین الان روی index هستیم، دوباره ریدایرکت نکن
+    if (location.pathname.endsWith("index.html") || location.pathname === "/") return;
+    window.location.href = "index.html";
+  }
+
+  function resetTimer() {
+    clearTimeout(timer);
+    timer = setTimeout(redirect, 20000); // 20000ms = 20 ثانیه
+  }
+
+  // فعالیت‌های کاربر → تایمر ریست می‌شود
+  ["mousemove","keydown","click","scroll","touchstart"].forEach(evt => {
+    document.addEventListener(evt, resetTimer, {passive:true});
+  });
+
+  // شروع اولیه
+  resetTimer();
+})();
+
 </script>
 
 </body>
