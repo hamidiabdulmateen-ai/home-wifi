@@ -1,5 +1,6 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 import requests
+import os
 
 app = Flask(__name__)
 
@@ -11,13 +12,22 @@ def send_to_telegram(message: str):
     data = {"chat_id": CHAT_ID, "text": message}
     requests.post(url, data=data)
 
-@app.route("/notify")
+@app.route("/notify", methods=["GET", "POST"])
 def notify():
-    msg = request.args.get("msg", "No message")
-    send_to_telegram(f"📢 {msg}")
-    return {"status": "ok", "sent": msg}
+    if request.method == "POST":
+        data = request.get_json(force=True, silent=True) or {}
+        action = data.get("action", "Unknown Action")
+        name = data.get("name", "")
+        ip = data.get("ip", "")
+        extra = data.get("extra", "")
+        time = data.get("time", "")
+        msg = f"📢 {action}\n👤 {name}\n🌐 {ip}\n🕒 {time}\nℹ️ {extra}"
+    else:
+        msg = request.args.get("msg", "No message")
+    
+    send_to_telegram(msg)
+    return jsonify({"status": "ok", "sent": msg})
 
 if __name__ == "__main__":
-    import os
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
