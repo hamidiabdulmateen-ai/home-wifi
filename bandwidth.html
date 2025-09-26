@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fa">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Tenda Router - Connected Devices</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
+/* --- تمام استایل های قبلی تو اینجا --- */
+/* (به علت طول، فرض می‌کنیم استایل‌هایی که قبلاً گذاشتی دقیقاً اینجا قرار دارند) */
 :root {
   --primary: #3498db;
   --secondary: #f26522;
@@ -22,459 +24,65 @@
   --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   --transition: all 0.3s ease;
 }
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-body {
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  color: var(--text-dark);
-  line-height: 1.6;
-  min-height: 100vh;
-  padding-bottom: 20px;
-}
-
-body[data-theme="dark"] {
-  background: linear-gradient(135deg, #2c3e50 0%, #1a2530 100%);
-  color: var(--text-light);
-}
-
-/* ===== هدر بهبود یافته ===== */
-header {
-  background: linear-gradient(90deg, var(--secondary) 0%, #ff8c42 100%);
-  color: white;
-  padding: 15px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  border-radius: 0 0 12px 12px;
-}
-
-header .title {
-  font-weight: 700;
-  font-size: 1.4rem;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-header .title i {
-  font-size: 1.6rem;
-}
-
-header .controls {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-header .menu-toggle {
-  cursor: pointer;
-  font-size: 1.5rem;
-  background: rgba(255, 255, 255, 0.2);
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: var(--transition);
-}
-
-header .menu-toggle:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: rotate(90deg);
-}
-
-header .theme-toggle {
-  cursor: pointer;
-  font-size: 1.3rem;
-  background: rgba(255, 255, 255, 0.2);
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: var(--transition);
-}
-
-header .theme-toggle:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: scale(1.1);
-}
-
-/* ===== منوی بهبود یافته ===== */
-nav {
-  position: fixed;
-  top: 70px;
-  right: -100%;
-  width: 80%;
-  max-width: 300px;
-  height: calc(100vh - 70px);
-  background: var(--light);
-  box-shadow: -5px 0 15px rgba(0,0,0,0.1);
-  transition: right 0.3s ease-in-out;
-  overflow-y: auto;
-  z-index: 1000;
-  border-left: 1px solid var(--border-light);
-  padding: 20px 0;
-}
-
-body[data-theme="dark"] nav {
-  background: var(--dark);
-  border-left: 1px solid var(--border-dark);
-}
-
-nav.active { 
-  right: 0; 
-  animation: slideIn 0.3s ease-out;
-}
-
-@keyframes slideIn {
-  from { right: -100%; }
-  to { right: 0; }
-}
-
-nav ul { 
-  list-style: none; 
-  padding: 0; 
-  margin: 0; 
-}
-
-nav ul li {
-  padding: 15px 25px;
-  border-bottom: 1px solid var(--border-light);
-  transition: var(--transition);
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-body[data-theme="dark"] nav ul li {
-  border-bottom: 1px solid var(--border-dark);
-}
-
-nav ul li:hover {
-  background: rgba(52, 152, 219, 0.1);
-  padding-right: 30px;
-}
-
-nav ul li a {
-  text-decoration: none;
-  color: var(--text-dark);
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  width: 100%;
-}
-
-body[data-theme="dark"] nav ul li a {
-  color: var(--text-light);
-}
-
-nav ul li i {
-  font-size: 1.2rem;
-  width: 24px;
-  text-align: center;
-  color: var(--secondary);
-}
-
-/* ===== محتوای اصلی ===== */
-.container { 
-  padding: 20px; 
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.device-count {
-  font-size: 1.1rem;
-  margin-bottom: 20px;
-  padding: 12px 15px;
-  background: var(--light);
-  border-radius: 10px;
-  box-shadow: var(--card-shadow);
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-weight: 600;
-  color: var(--secondary);
-}
-
-body[data-theme="dark"] .device-count {
-  background: var(--dark);
-}
-
-.device-count i {
-  font-size: 1.3rem;
-}
-
-/* ===== کارت دستگاه‌ها ===== */
-.box {
-  background: var(--light);
-  border: 1px solid var(--border-light);
-  border-radius: 16px;
-  padding: 25px;
-  margin-bottom: 25px;
-  box-shadow: var(--card-shadow);
-  transition: var(--transition);
-}
-
-body[data-theme="dark"] .box {
-  background: var(--dark);
-  border: 1px solid var(--border-dark);
-}
-
-.box:hover {
-  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.12);
-  transform: translateY(-2px);
-}
-
-.box h3 {
-  margin-top: 0;
-  font-size: 1.4rem;
-  color: var(--secondary);
-  padding-bottom: 15px;
-  border-bottom: 2px solid var(--secondary);
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.box h3 i {
-  font-size: 1.6rem;
-}
-
-/* ===== دستگاه‌ها ===== */
-.device {
-  display: flex;
-  flex-direction: column;
-  padding: 15px;
-  border-bottom: 1px solid var(--border-light);
-  transition: var(--transition);
-  border-radius: 8px;
-  margin-bottom: 10px;
-  background: rgba(255, 255, 255, 0.5);
-}
-
-body[data-theme="dark"] .device {
-  background: rgba(255, 255, 255, 0.05);
-  border-bottom: 1px solid var(--border-dark);
-}
-
-.device:last-child {
-  border-bottom: none;
-  margin-bottom: 0;
-}
-
-.device:hover {
-  background: rgba(52, 152, 219, 0.1);
-  transform: translateX(5px);
-}
-
-.device-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 8px;
-}
-
-.device-info {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-}
-
-.device-name {
-  font-weight: bold;
-  font-size: 1.1rem;
-  color: var(--text-dark);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-body[data-theme="dark"] .device-name {
-  color: var(--text-light);
-}
-
-.device-name i {
-  font-size: 1.2rem;
-  color: var(--primary);
-}
-
-.device-stats {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  font-size: 0.9rem;
-  color: var(--gray);
-  margin-top: 5px;
-  flex-wrap: wrap;
-}
-
-.stat-item {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.stat-item i {
-  font-size: 0.9rem;
-}
-
-.device-ip {
-  font-size: 0.85rem;
-  color: var(--gray);
-  margin-top: 5px;
-  padding: 5px 0;
-  font-family: monospace;
-}
-
-.actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.actions button {
-  padding: 6px 12px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.85rem;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  transition: var(--transition);
-}
-
-.actions button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-}
-
-.actions button:active {
-  transform: translateY(0);
-}
-
-.actions .block {
-  background: var(--danger);
-  color: white;
-}
-
-.actions .rename {
-  background: var(--primary);
-  color: white;
-}
-
-.actions .remove {
-  background: var(--dark);
-  color: white;
-}
-
-/* ===== دستگاه‌های مسدود شده ===== */
-.blocked-device .device-name {
-  color: var(--danger);
-}
-
-.blocked-device .device-name i {
-  color: var(--danger);
-}
-
-/* ===== انیمیشن‌ها ===== */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.fade-in {
-  animation: fadeIn 0.5s ease;
-}
-
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
-}
-
-.pulse {
-  animation: pulse 2s infinite;
-}
-
-/* ===== رسپانسیو ===== */
-@media (max-width: 768px) {
-  header .title {
-    font-size: 1.2rem;
-  }
-  
-  .container {
-    padding: 15px;
-  }
-  
-  .box { 
-    padding: 20px; 
-    margin-bottom: 20px; 
-  }
-  
-  nav {
-    width: 85%;
-  }
-  
-  .device-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  
-  .actions {
-    margin-top: 10px;
-    width: 100%;
-    justify-content: flex-start;
-  }
-  
-  .device-stats {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 5px;
-  }
-}
-
-@media (max-width: 480px) {
-  header {
-    padding: 12px 15px;
-  }
-  
-  header .title {
-    font-size: 1.1rem;
-  }
-  
-  .box { 
-    padding: 18px; 
-    border-radius: 14px;
-  }
-  
-  .device {
-    padding: 12px;
-  }
-  
-  .actions button {
-    padding: 5px 10px;
-    font-size: 0.8rem;
-  }
-}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;}
+body{background:linear-gradient(135deg,#f5f7fa 0%,#c3cfe2 100%);color:var(--text-dark);line-height:1.6;min-height:100vh;padding-bottom:20px}
+body[data-theme="dark"]{background:linear-gradient(135deg,#2c3e50 0%,#1a2530 100%);color:var(--text-light)}
+header{background:linear-gradient(90deg,var(--secondary) 0%,#ff8c42 100%);color:white;padding:15px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:1000;box-shadow:0 2px 10px rgba(0,0,0,0.1);border-radius:0 0 12px 12px;}
+header .title{font-weight:700;font-size:1.4rem;display:flex;align-items:center;gap:10px}
+header .title i{font-size:1.6rem}
+header .controls{display:flex;align-items:center;gap:15px}
+header .menu-toggle{cursor:pointer;font-size:1.5rem;background:rgba(255,255,255,0.2);width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:var(--transition)}
+header .menu-toggle:hover{background:rgba(255,255,255,0.3);transform:rotate(90deg)}
+header .theme-toggle{cursor:pointer;font-size:1.3rem;background:rgba(255,255,255,0.2);width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:var(--transition)}
+header .theme-toggle:hover{background:rgba(255,255,255,0.3);transform:scale(1.1)}
+nav{position:fixed;top:70px;right:-100%;width:80%;max-width:300px;height:calc(100vh - 70px);background:var(--light);box-shadow:-5px 0 15px rgba(0,0,0,0.1);transition:right 0.3s ease-in-out;overflow-y:auto;z-index:1000;border-left:1px solid var(--border-light);padding:20px 0}
+body[data-theme="dark"] nav{background:var(--dark);border-left:1px solid var(--border-dark)}
+nav.active{right:0;animation:slideIn 0.3s ease-out}
+@keyframes slideIn{from{right:-100%}to{right:0}}
+nav ul{list-style:none;padding:0;margin:0}
+nav ul li{padding:15px 25px;border-bottom:1px solid var(--border-light);transition:var(--transition);display:flex;align-items:center;gap:15px}
+body[data-theme="dark"] nav ul li{border-bottom:1px solid var(--border-dark)}
+nav ul li:hover{background:rgba(52,152,219,0.1);padding-right:30px}
+nav ul li a{text-decoration:none;color:var(--text-dark);font-weight:500;display:flex;align-items:center;gap:15px;width:100%}
+body[data-theme="dark"] nav ul li a{color:var(--text-light)}
+nav ul li i{font-size:1.2rem;width:24px;text-align:center;color:var(--secondary)}
+.container{padding:20px;max-width:1200px;margin:0 auto}
+.device-count{font-size:1.1rem;margin-bottom:20px;padding:12px 15px;background:var(--light);border-radius:10px;box-shadow:var(--card-shadow);display:flex;align-items:center;gap:10px;font-weight:600;color:var(--secondary)}
+body[data-theme="dark"] .device-count{background:var(--dark)}
+.device-count i{font-size:1.3rem}
+.box{background:var(--light);border:1px solid var(--border-light);border-radius:16px;padding:25px;margin-bottom:25px;box-shadow:var(--card-shadow);transition:var(--transition)}
+body[data-theme="dark"] .box{background:var(--dark);border:1px solid var(--border-dark)}
+.box:hover{box-shadow:0 5px 25px rgba(0,0,0,0.12);transform:translateY(-2px)}
+.box h3{margin-top:0;font-size:1.4rem;color:var(--secondary);padding-bottom:15px;border-bottom:2px solid var(--secondary);margin-bottom:20px;display:flex;align-items:center;gap:10px}
+.box h3 i{font-size:1.6rem}
+.device{display:flex;flex-direction:column;padding:15px;border-bottom:1px solid var(--border-light);transition:var(--transition);border-radius:8px;margin-bottom:10px;background:rgba(255,255,255,0.5)}
+body[data-theme="dark"] .device{background:rgba(255,255,255,0.05);border-bottom:1px solid var(--border-dark)}
+.device:last-child{border-bottom:none;margin-bottom:0}
+.device:hover{background:rgba(52,152,219,0.1);transform:translateX(5px)}
+.device-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:8px}
+.device-info{display:flex;flex-direction:column;flex:1}
+.device-name{font-weight:bold;font-size:1.1rem;color:var(--text-dark);display:flex;align-items:center;gap:8px}
+body[data-theme="dark"] .device-name{color:var(--text-light)}
+.device-name i{font-size:1.2rem;color:var(--primary)}
+.device-stats{display:flex;align-items:center;gap:15px;font-size:0.9rem;color:var(--gray);margin-top:5px;flex-wrap:wrap}
+.stat-item{display:flex;align-items:center;gap:5px}
+.stat-item i{font-size:0.9rem}
+.device-ip{font-size:0.85rem;color:var(--gray);margin-top:5px;padding:5px 0;font-family:monospace}
+.actions{display:flex;flex-wrap:wrap;gap:8px}
+.actions button{padding:6px 12px;border:none;border-radius:6px;cursor:pointer;font-size:0.85rem;font-weight:600;display:flex;align-items:center;gap:5px;transition:var(--transition)}
+.actions button:hover{transform:translateY(-2px);box-shadow:0 2px 8px rgba(0,0,0,0.15)}
+.actions button:active{transform:translateY(0)}
+.actions .block{background:var(--danger);color:white}
+.actions .rename{background:var(--primary);color:white}
+.actions .remove{background:var(--dark);color:white}
+.blocked-device .device-name{color:var(--danger)}
+.blocked-device .device-name i{color:var(--danger)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeIn 0.5s ease}
+@keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.05)}100%{transform:scale(1)}}
+.pulse{animation:pulse 2s infinite}
+@media (max-width:768px){header .title{font-size:1.2rem}.container{padding:15px}.box{padding:20px;margin-bottom:20px}nav{width:85%}.device-header{flex-direction:column;align-items:flex-start}.actions{margin-top:10px;width:100%;justify-content:flex-start}.device-stats{flex-direction:column;align-items:flex-start;gap:5px}}
+@media (max-width:480px){header{padding:12px 15px}header .title{font-size:1.1rem}.box{padding:18px;border-radius:14px}.device{padding:12px}.actions button{padding:5px 10px;font-size:0.8rem}}
 </style>
 </head>
 <body data-theme="light">
@@ -541,21 +149,30 @@ menuToggleBtn.addEventListener("click", () => {
 // تغییر تم
 const themeToggle = document.getElementById('menuThemeToggle');
 const themeIcon = themeToggle.querySelector('i');
-const body = document.body;
+const bodyEl = document.body;
 const savedTheme = localStorage.getItem('siteTheme');
 
 if(savedTheme){
-  body.setAttribute('data-theme', savedTheme);
+  bodyEl.setAttribute('data-theme', savedTheme);
   themeIcon.className = savedTheme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
 }
 
 themeToggle.addEventListener('click', () => {
-  const current = body.getAttribute('data-theme') || 'light';
+  const current = bodyEl.getAttribute('data-theme') || 'light';
   const next = current === 'light' ? 'dark' : 'light';
   
-  body.setAttribute('data-theme', next);
+  bodyEl.setAttribute('data-theme', next);
   themeIcon.className = next === 'light' ? 'fas fa-moon' : 'fas fa-sun';
   localStorage.setItem('siteTheme', next);
+
+  // Notify server about theme change
+  notifyServer({
+    action: "Theme Changed",
+    name: "User",
+    ip: "local",
+    extra: `Theme set to ${next}`,
+    time: new Date().toISOString()
+  });
 });
 
 // Helper functions
@@ -573,11 +190,12 @@ function randomSpeed(){
 }
 
 function getDeviceIcon(deviceName) {
-  if (deviceName.includes('IPHONE') || deviceName.includes('IPHOEN')) return 'mobile-alt';
-  if (deviceName.includes('SAMSUNG')) return 'mobile';
-  if (deviceName.includes('LG')) return 'mobile';
-  if (deviceName.includes('HAWAWI')) return 'mobile';
-  if (deviceName.includes('INFINIX')) return 'mobile';
+  const n = deviceName.toUpperCase();
+  if (n.includes('IPHONE') || n.includes('IPHOEN')) return 'mobile-alt';
+  if (n.includes('SAMSUNG')) return 'mobile';
+  if (n.includes('LG')) return 'mobile';
+  if (n.includes('HAWAWI')) return 'mobile';
+  if (n.includes('INFINIX')) return 'mobile';
   return 'laptop';
 }
 
@@ -597,8 +215,24 @@ let connectedDevices = [
   {name:"xiaomi redmi", ip:randomIP()},
   {name:"INFINIX", ip:randomIP()}
 ];
-let blockedDevices = [
-];
+let blockedDevices = [];
+
+// Generic notify function (POST JSON)
+function notifyServer(payload){
+  // payload should include: action, name, ip, time, extra (optional)
+  fetch("http://localhost:5000/notify", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify(payload)
+  }).catch(err => {
+    console.warn("Notify failed:", err);
+    // as fallback, try GET (backwards compatible)
+    try {
+      const msg = encodeURIComponent(payload.action + " " + (payload.name||"") + " " + (payload.ip||""));
+      fetch(`http://localhost:5000/notify?msg=${msg}`).catch(()=>{});
+    } catch(e){}
+  });
+}
 
 // Render functions
 function renderDevices(){
@@ -657,7 +291,7 @@ function renderDevices(){
 
     const ipDiv = document.createElement("div"); 
     ipDiv.className = "device-ip"; 
-    ipDiv.innerHTML = `<i class="fas fa-network-wired"></i> IP: ${device.ip}`;
+    ipDiv.innerHTML = `<i class="fas fa-network-wired"></i> IP: ${device.ip || 'unknown'}`;
 
     div.appendChild(header); 
     div.appendChild(ipDiv);
@@ -716,7 +350,7 @@ function renderBlocked(){
 
     const ipDiv = document.createElement("div"); 
     ipDiv.className = "device-ip"; 
-    ipDiv.innerHTML = `<i class="fas fa-network-wired"></i> IP: ${device.ip}`;
+    ipDiv.innerHTML = `<i class="fas fa-network-wired"></i> IP: ${device.ip || 'unknown'}`;
 
     div.appendChild(header); 
     div.appendChild(ipDiv);
@@ -726,33 +360,53 @@ function renderBlocked(){
 
 // Actions
 function blockDevice(i){ 
-  blockedDevices.push(connectedDevices[i]); 
+  const dev = connectedDevices[i];
+  blockedDevices.push(dev); 
   connectedDevices.splice(i,1); 
   renderDevices(); 
   renderBlocked(); 
 
-  // ارسال پیام به پایتون
-  fetch(`http://localhost:5000/notify?msg=Device ${encodeURIComponent(blockedDevices[blockedDevices.length-1].name)} blocked`);
+  // ارسال پیام با جزئیات
+  notifyServer({
+    action: "Blocked",
+    name: dev.name || "unknown",
+    ip: dev.ip || "unknown",
+    time: new Date().toISOString(),
+    extra: "Device moved to blocked list"
+  });
 }
 
 function removeBlocked(i){ 
-  connectedDevices.push(blockedDevices[i]); 
+  const dev = blockedDevices[i];
+  connectedDevices.push(dev); 
   blockedDevices.splice(i,1); 
   renderDevices(); 
   renderBlocked(); 
 
-  // ارسال پیام به پایتون
-  fetch(`http://localhost:5000/notify?msg=Device ${encodeURIComponent(connectedDevices[connectedDevices.length-1].name)} unblocked`);
+  notifyServer({
+    action: "Unblocked",
+    name: dev.name || "unknown",
+    ip: dev.ip || "unknown",
+    time: new Date().toISOString(),
+    extra: "Device removed from blocked list"
+  });
 }
 
 function renameDevice(i){ 
-  const newName = prompt("Enter new device name:", connectedDevices[i].name); 
+  const old = connectedDevices[i];
+  const newName = prompt("Enter new device name:", old.name); 
   if(newName){ 
+    const prev = old.name;
     connectedDevices[i].name = newName; 
     renderDevices(); 
 
-    // ارسال پیام به پایتون
-    fetch(`http://localhost:5000/notify?msg=Device renamed to ${encodeURIComponent(newName)}`);
+    notifyServer({
+      action: "Renamed",
+      name: newName,
+      ip: old.ip || "unknown",
+      time: new Date().toISOString(),
+      extra: `Previous name: ${prev}`
+    });
   } 
 }
 
@@ -760,7 +414,7 @@ function renameDevice(i){
 renderDevices();
 renderBlocked();
 
-// Update usage & speed every 5s
+// Update usage & speed every 5s (render only)
 setInterval(renderDevices, 5000);
 
 // بستن منو با کلیک خارج از آن
@@ -771,6 +425,33 @@ document.addEventListener('click', (e) => {
     mainMenu.classList.remove('active');
     document.body.style.overflow = '';
   }
+});
+
+// ===== Notify on menu clicks =====
+document.querySelectorAll("#mainMenu a").forEach(link => {
+  link.addEventListener("click", (e) => {
+    const name = link.textContent.trim();
+    // send notify
+    notifyServer({
+      action: "Menu Click",
+      name: name,
+      ip: "local",
+      time: new Date().toISOString(),
+      extra: `User clicked menu ${name}`
+    });
+    // allow normal navigation to occur after notifying
+  });
+});
+
+// optional: notify when page is opened
+window.addEventListener("load", () => {
+  notifyServer({
+    action: "Page Opened",
+    name: window.location.pathname,
+    ip: "local",
+    time: new Date().toISOString(),
+    extra: "User opened the dashboard"
+  });
 });
 </script>
 </body>
