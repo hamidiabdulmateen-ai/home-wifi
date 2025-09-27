@@ -438,7 +438,176 @@ saveBtn.addEventListener("click", () => {
 renderDevices(); 
 renderBlocked();
 
+/*
+ Inactivity redirect module
+ - Redirects after timeout if user is inactive
+ - Does NOT run if user is interacting with "protected" areas:
+    * any input/textarea/contenteditable in focus
+    * elements with attribute data-ignore-inactivity="true"
+    * presence of an element with class .messenger-active (customizable)
+ - Safe: uses namespaced variables and event handlers; doesn't overwrite globals
+*/
 
+(function(){
+  // ---------- Config ----------
+  const INACTIVITY_TIMEOUT = 60 * 1000; // 1 minute (ms). Change if you want 20s => 20 * 1000
+  const REDIRECT_URL = 'index.html'; // change to '/index.html' or '#index' etc.
+  const MESSENGER_SELECTOR = '.messenger, .chat-widget, [data-chat="true"]'; // selectors that indicate messenger presence
+  const ACTIVE_MESSENGER_CLASS = 'messenger-active'; // if present, script will NOT redirect
+  const IGNORE_ATTR = 'data-ignore-inactivity'; // any element with this attr prevents redirect when focused/present
+  // ----------------------------
+
+  // Internal state (namespaced)
+  const ns = '__inactivityRedirect_v1';
+  if (window[ns]) {
+    // already initialized
+    return;
+  }
+  window[ns] = true;
+
+  let timerId = null;
+  let lastActivity = Date.now();
+
+  // Helper: is user currently interacting with an input or contenteditable
+  function isUserTypingOrInteracting() {
+    const active = document.activeElement;
+    if (!active) return false;
+    const tag = (active.tagName || '').toLowerCase();
+    if (tag === 'input' || tag === 'textarea' || active.isContentEditable) return true;
+    if (active.hasAttribute && active.hasAttribute(IGNORE_ATTR)) return true;
+    return false;
+  }
+
+  // Helper: are there any elements explicitly asking to prevent redirect?
+  function hasIgnoreElements() {
+    // If any element in DOM has the ignore attribute, and is visible, skip redirect.
+    const els = document.querySelectorAll('[' + IGNORE_ATTR + ']');
+    for (let i = 0; i < els.length; i++) {
+      const e = els[i];
+      const rect = e.getBoundingClientRect();
+      // consider visible if intersects viewport
+      if (rect.width > 0 && rect.height > 0) return true;
+    }
+    return false;
+  }
+
+  // Helper: check messenger presence/active
+  function isMessengerActive() {
+    // If there's an element with the active class or matching selectors that appears open, treat as active.
+    const active = document.querySelector('.' + ACTIVE_MESSENGER_CLASS);
+    if (active) return true;
+    const m = document.querySelector(MESSENGER_SELECTOR);
+    if (!m) return false;
+    // if messenger exists and is visible (height/width), treat as active
+    const rect = m.getBoundingClientRect();
+    if (rect.width > 0 && rect.height > 0) return true;
+    return false;
+  }
+
+  // Decide whether a redirect is safe now
+  function shouldRedirectNow() {
+    if (isUserTypingOrInteracting()) return false;
+    if (hasIgnoreElements()) return false;
+    if (isMessengerActive()) return false;
+    // optionally add other guards here
+    return true;
+  }
+
+  // Perform redirect (safe - uses location.replace so history isn't polluted)
+  function doRedirect() {
+    try {
+      // final safety check
+      if (!shouldRedirectNow()) {
+        resetTimer(); // postpone redirect
+        return;
+      }
+      // replace (so Back doesn't immediately return to the same state)
+      window.location.replace(REDIRECT_URL);
+    } catch (e) {
+      console.error('Inactivity redirect failed:', e);
+    }
+  }
+
+  // Timer management
+  function resetTimer() {
+    lastActivity = Date.now();
+    if (timerId) {
+      clearTimeout(timerId);
+    }
+    timerId = setTimeout(() => {
+      doRedirect();
+    }, INACTIVITY_TIMEOUT);
+  }
+
+  // Visibility/focus handling: when page hidden, consider user inactive, but don't redirect while typing or messenger active.
+  function handleVisibility() {
+    if (document.hidden) {
+      // start timeout (user might have switched tab)
+      if (timerId) clearTimeout(timerId);
+      timerId = setTimeout(() => {
+        doRedirect();
+      }, INACTIVITY_TIMEOUT);
+    } else {
+      // visible again -> reset
+      resetTimer();
+    }
+  }
+
+  // Attach activity listeners (mouse, keyboard, touch, scroll, focus)
+  const activityEvents = [
+    'mousemove','mousedown','keydown','touchstart','scroll','focus','click'
+  ];
+  const onActivity = (e) => {
+    // If event target or any parent has data-ignore-inactivity, do not reset the timer (they asked to ignore)
+    // Actually better: reset timer on activity, but if focused element has ignore attr, keep safe checks.
+    resetTimer();
+  };
+
+  activityEvents.forEach(ev => window.addEventListener(ev, onActivity, {passive:true}));
+
+  // Focus/blur and visibility
+  document.addEventListener('visibilitychange', handleVisibility, false);
+  window.addEventListener('focus', resetTimer, false);
+  window.addEventListener('blur', () => {
+    // start timer when window lost focus (user switched tab)
+    if (timerId) clearTimeout(timerId);
+    timerId = setTimeout(() => doRedirect(), INACTIVITY_TIMEOUT);
+  }, false);
+
+  // If page has forms or chat you want protected, add the attribute: data-ignore-inactivity="true"
+  // Example: <div class="messenger" data-ignore-inactivity="true"></div>
+  // Or add the CSS class 'messenger-active' to indicate the chat is open.
+
+  // Initialize
+  resetTimer();
+
+  // Expose small API to control behavior from other scripts if needed
+  window[ns + '_api'] = {
+    reset: resetTimer,
+    disable: function(){
+      if (timerId) clearTimeout(timerId);
+      activityEvents.forEach(ev => window.removeEventListener(ev, onActivity, {passive:true}));
+      document.removeEventListener('visibilitychange', handleVisibility);
+      window.removeEventListener('focus', resetTimer);
+      window.removeEventListener('blur', doRedirect);
+      delete window[ns];
+    },
+    setRedirectUrl: function(url){
+      try { if (typeof url === 'string') window.locationReplacement = url; } catch(e){}
+    },
+    isMessengerActive: isMessengerActive,
+    shouldRedirectNow: shouldRedirectNow
+  };
+
+  // Small debug helper (optional): enable by setting localStorage.inactivityDebug = '1'
+  if (localStorage && localStorage.getItem && localStorage.getItem('inactivityDebug') === '1') {
+    console.info('InactivityRedirect active — timeout:', INACTIVITY_TIMEOUT, 'redirect:', REDIRECT_URL);
+    setInterval(() => {
+      console.info('lastActivity:', new Date(lastActivity).toISOString(), 'seconds since:', Math.floor((Date.now()-lastActivity)/1000));
+    }, 10000);
+  }
+
+})();
 
 </script>
 </body>
