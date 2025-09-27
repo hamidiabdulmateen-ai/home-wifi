@@ -466,21 +466,8 @@ window.addEventListener("load", () => {
 
     window.location.href = "index.html";
   }
-
-  function resetTimer() {
-    clearTimeout(timer);
-    timer = setTimeout(redirect, 120000); // 120000ms = 2 دقیقه
-  }
-
-  // هر فعالیتی که کاربر انجام بده → تایمر ریست میشه
-  ["mousemove","keydown","click","scroll","touchstart"].forEach(evt => {
-    document.addEventListener(evt, resetTimer, {passive:true});
-  });
-
-  // شروع اولیه
-  resetTimer();
-})();
-
+ 
 </script>
 </body>
 </html>
+
