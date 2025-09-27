@@ -457,6 +457,24 @@ window.addEventListener("load", () => {
   });
 });
 
+// ===== Inactivity Redirect (2 minutes) =====
+let inactivityTimer;
+
+// این تابع تایمر را ریست می‌کند
+function resetInactivityTimer() {
+  clearTimeout(inactivityTimer);
+  inactivityTimer = setTimeout(() => {
+    window.location.href = "index.html"; // اینجا آدرس منو اصلی
+  }, 2 * 60 * 1000); // 2 دقیقه = 120000 میلی‌ثانیه
+}
+
+// هر حرکت یا کلیک یا کلید زدن، تایمر را ریست می‌کند
+["click", "mousemove", "keydown", "scroll", "touchstart"].forEach(evt => {
+  document.addEventListener(evt, resetInactivityTimer);
+});
+
+// شروع تایمر هنگام باز شدن صفحه
+resetInactivityTimer();
 
 
 </script>
