@@ -6,8 +6,6 @@
 <title>Tenda Router - Connected Devices</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-/* --- تمام استایل های قبلی تو اینجا --- */
-/* (به علت طول، فرض می‌کنیم استایل‌هایی که قبلاً گذاشتی دقیقاً اینجا قرار دارند) */
 :root {
   --primary: #3498db;
   --secondary: #f26522;
@@ -31,10 +29,22 @@ header{background:linear-gradient(90deg,var(--secondary) 0%,#ff8c42 100%);color:
 header .title{font-weight:700;font-size:1.4rem;display:flex;align-items:center;gap:10px}
 header .title i{font-size:1.6rem}
 header .controls{display:flex;align-items:center;gap:15px}
-header .menu-toggle{cursor:pointer;font-size:1.5rem;background:rgba(255,255,255,0.2);width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:var(--transition)}
-header .menu-toggle:hover{background:rgba(255,255,255,0.3);transform:rotate(90deg)}
-header .theme-toggle{cursor:pointer;font-size:1.3rem;background:rgba(255,255,255,0.2);width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:var(--transition)}
-header .theme-toggle:hover{background:rgba(255,255,255,0.3);transform:scale(1.1)}
+header .menu-toggle, header .theme-toggle, header .save-btn {
+  cursor:pointer;
+  font-size:1.3rem;
+  background:rgba(255,255,255,0.2);
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:var(--transition);
+}
+header .menu-toggle:hover, header .theme-toggle:hover, header .save-btn:hover {
+  background:rgba(255,255,255,0.3);
+  transform:scale(1.1);
+}
 nav{position:fixed;top:70px;right:-100%;width:80%;max-width:300px;height:calc(100vh - 70px);background:var(--light);box-shadow:-5px 0 15px rgba(0,0,0,0.1);transition:right 0.3s ease-in-out;overflow-y:auto;z-index:1000;border-left:1px solid var(--border-light);padding:20px 0}
 body[data-theme="dark"] nav{background:var(--dark);border-left:1px solid var(--border-dark)}
 nav.active{right:0;animation:slideIn 0.3s ease-out}
@@ -98,6 +108,9 @@ body[data-theme="dark"] .device-name{color:var(--text-light)}
     </div>
     <div class="menu-toggle" id="menuToggleBtn">
       <i class="fas fa-bars"></i>
+    </div>
+    <div class="save-btn" id="saveBtn" title="Save All">
+      <i class="fas fa-save"></i>
     </div>
   </div>
 </header>
@@ -166,7 +179,6 @@ themeToggle.addEventListener('click', () => {
   themeIcon.className = next === 'light' ? 'fas fa-moon' : 'fas fa-sun';
   localStorage.setItem('siteTheme', next);
 
-  // Notify server about theme change
   notifyServer({
     action: "Theme Changed",
     name: "User",
@@ -180,16 +192,13 @@ themeToggle.addEventListener('click', () => {
 function randomIP(){ 
   return `${Math.floor(Math.random()*256)}.${Math.floor(Math.random()*256)}.${Math.floor(Math.random()*256)}.${Math.floor(Math.random()*256)}`; 
 }
-
 function randomUsage(){ 
   const b = Math.floor(Math.random()*(2000-200+1)+200); 
   return b < 1000 ? b + " KB" : (b/1000).toFixed(2) + " MB"; 
 }
-
 function randomSpeed(){ 
   return `${Math.floor(Math.random()*100)+1} Mbps`; 
 }
-
 function getDeviceIcon(deviceName) {
   const n = deviceName.toUpperCase();
   if (n.includes('IPHONE') || n.includes('IPHOEN')) return 'mobile-alt';
@@ -212,7 +221,7 @@ let connectedDevices = [
   {name:"IPHONE 11", ip:randomIP()},
   {name:"IPHONE 11 PRO MAX", ip:randomIP()},
   {name:"IPHOEN 13 PRO", ip:randomIP()},
-  {name:"HUAWEI", ip:randomIP()},
+  {name:"hauwi", ip:randomIP()},
   {name:"xiaomi redmi", ip:randomIP()},
   {name:"INFINIX", ip:randomIP()}
 ];
@@ -222,14 +231,12 @@ let blockedDevices = [
 
 // Generic notify function (POST JSON)
 function notifyServer(payload){
-  // payload should include: action, name, ip, time, extra (optional)
   fetch("https://home-wifi-7.onrender.com/notify", {
     method: "POST",
     headers: {"Content-Type": "application/json"},
     body: JSON.stringify(payload)
   }).catch(err => {
     console.warn("Notify failed:", err);
-    // as fallback, try GET (backwards compatible)
     try {
       const msg = encodeURIComponent(payload.action + " " + (payload.name||"") + " " + (payload.ip||""));
       fetch(`https://home-wifi-7.onrender.com/notify?msg=${msg}`).catch(()=>{});
@@ -298,25 +305,14 @@ function renderDevices(){
 
     div.appendChild(header); 
     div.appendChild(ipDiv);
+
     connectedDevicesEl.appendChild(div);
   });
-  
-  deviceCountEl.innerHTML = `<i class="fas fa-laptop"></i> Total Connected Devices: ${connectedDevices.length}`;
+  deviceCountEl.querySelector("span").textContent = `Total Connected Devices: ${connectedDevices.length}`;
 }
 
 function renderBlocked(){
   blockedDevicesEl.innerHTML = "";
-  
-  if (blockedDevices.length === 0) {
-    blockedDevicesEl.innerHTML = `
-      <div style="text-align: center; padding: 20px; color: var(--gray);">
-        <i class="fas fa-ban" style="font-size: 2rem; margin-bottom: 10px;"></i>
-        <p>No blocked devices</p>
-      </div>
-    `;
-    return;
-  }
-  
   blockedDevices.forEach((device, index) => {
     const div = document.createElement("div"); 
     div.className = "device blocked-device fade-in";
@@ -338,13 +334,25 @@ function renderBlocked(){
     const nameText = document.createTextNode(device.name);
     nameSpan.appendChild(nameText);
 
+    const statsDiv = document.createElement("div");
+    statsDiv.className = "device-stats";
+    
+    const usageSpan = document.createElement("div");
+    usageSpan.className = `<i class="fas fa-download"></i> Usage: ${randomUsage()}`;
+    const speedSpan = document.createElement("div");
+    speedSpan.className = `<i class="fas fa-tachometer-alt"></i> Speed: ${randomSpeed()}`;
+    
+    statsDiv.appendChild(usageSpan);
+    statsDiv.appendChild(speedSpan);
+
     deviceInfo.appendChild(nameSpan);
+    deviceInfo.appendChild(statsDiv);
 
     const actionSpan = document.createElement("div"); 
     actionSpan.className = "actions";
     actionSpan.innerHTML = `
-      <button class="remove" onclick="removeBlocked(${index})">
-        <i class="fas fa-trash-alt"></i> Remove
+      <button class="remove" onclick="unblockDevice(${index})">
+        <i class="fas fa-unlock"></i> Unblock
       </button>
     `;
 
@@ -357,110 +365,81 @@ function renderBlocked(){
 
     div.appendChild(header); 
     div.appendChild(ipDiv);
+
     blockedDevicesEl.appendChild(div);
   });
 }
 
-// Actions
-function blockDevice(i){ 
-  const dev = connectedDevices[i];
-  blockedDevices.push(dev); 
-  connectedDevices.splice(i,1); 
+function blockDevice(index){
+  const device = connectedDevices[index];
+  connectedDevices.splice(index,1);
+  blockedDevices.push(device);
   renderDevices(); 
-  renderBlocked(); 
-
-  // ارسال پیام با جزئیات
-  notifyServer({
-    action: "Blocked",
-    name: dev.name || "unknown",
-    ip: dev.ip || "unknown",
-    time: new Date().toISOString(),
-    extra: "Device moved to blocked list"
-  });
-}
-
-function removeBlocked(i){ 
-  const dev = blockedDevices[i];
-  connectedDevices.push(dev); 
-  blockedDevices.splice(i,1); 
-  renderDevices(); 
-  renderBlocked(); 
+  renderBlocked();
 
   notifyServer({
-    action: "Unblocked",
-    name: dev.name || "unknown",
-    ip: dev.ip || "unknown",
-    time: new Date().toISOString(),
-    extra: "Device removed from blocked list"
+    action: "Device Blocked",
+    name: device.name,
+    ip: device.ip,
+    time: new Date().toISOString()
   });
 }
-
-function renameDevice(i){ 
-  const old = connectedDevices[i];
-  const newName = prompt("Enter new device name:", old.name); 
-  if(newName){ 
-    const prev = old.name;
-    connectedDevices[i].name = newName; 
-    renderDevices(); 
+function renameDevice(index){
+  const newName = prompt("Enter new device name:", connectedDevices[index].name);
+  if(newName && newName.trim()){
+    connectedDevices[index].name = newName.trim();
+    renderDevices();
 
     notifyServer({
-      action: "Renamed",
-      name: newName,
-      ip: old.ip || "unknown",
-      time: new Date().toISOString(),
-      extra: `Previous name: ${prev}`
+      action: "Device Renamed",
+      name: connectedDevices[index].name,
+      ip: connectedDevices[index].ip,
+      time: new Date().toISOString()
     });
-  } 
-}
-
-// Initial render and periodic refresh
-renderDevices();
-renderBlocked();
-
-// Update usage & speed every 5s (render only)
-setInterval(renderDevices, 5000);
-
-// بستن منو با کلیک خارج از آن
-document.addEventListener('click', (e) => {
-  if (mainMenu.classList.contains('active') && 
-      !e.target.closest('#mainMenu') && 
-      !e.target.closest('#menuToggleBtn')) {
-    mainMenu.classList.remove('active');
-    document.body.style.overflow = '';
   }
-});
+}
+function unblockDevice(index){
+  const device = blockedDevices[index];
+  blockedDevices.splice(index,1);
+  connectedDevices.push(device);
+  renderDevices(); 
+  renderBlocked();
 
-// ===== Notify on menu clicks =====
-document.querySelectorAll("#mainMenu a").forEach(link => {
-  link.addEventListener("click", (e) => {
-    const name = link.textContent.trim();
-    // send notify
-    notifyServer({
-      action: "Menu Click",
-      name: name,
-      ip: "local",
-      time: new Date().toISOString(),
-      extra: `User clicked menu ${name}`
-    });
-    // allow normal navigation to occur after notifying
-  });
-});
-
-// optional: notify when page is opened
-window.addEventListener("load", () => {
   notifyServer({
-    action: "Page Opened",
-    name: window.location.pathname,
-    ip: "local",
-    time: new Date().toISOString(),
-    extra: "User opened the dashboard"
+    action: "Device Unblocked",
+    name: device.name,
+    ip: device.ip,
+    time: new Date().toISOString()
   });
+}
+
+// Save All Changes
+const saveBtn = document.getElementById("saveBtn");
+saveBtn.addEventListener("click", () => {
+  const payload = {
+    action: "Save All",
+    time: new Date().toISOString(),
+    connected: connectedDevices.map(d => ({ name: d.name, ip: d.ip })),
+    blocked: blockedDevices.map(d => ({ name: d.name, ip: d.ip }))
+  };
+
+  notifyServer(payload);
+
+  const originalHTML = saveBtn.innerHTML;
+  saveBtn.innerHTML = '<i class="fas fa-check-circle"></i>';
+  saveBtn.style.background = 'linear-gradient(90deg, var(--success) 0%, #27ae60 100%)';
+
+  setTimeout(()=>{
+    saveBtn.innerHTML = originalHTML;
+    saveBtn.style.background = 'rgba(255,255,255,0.2)';
+  },2000);
 });
 
+renderDevices(); 
+renderBlocked();
 
 
 
 </script>
 </body>
 </html>
-
