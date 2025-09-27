@@ -457,31 +457,6 @@ window.addEventListener("load", () => {
   });
 });
 
-// --- 1. رفرش خودکار هر 1 دقیقه (60 ثانیه) ---
-setInterval(() => {
-  location.reload();
-}, 60000);
-
-// --- 2. رفرش بعد از بی‌استفاده ماندن ---
-let idleTime = 0;
-let idleLimit = 60; // ثانیه (اینجا 1 دقیقه)
-
-// ریست تایمر وقتی کاربر فعالیت دارد
-function resetIdle() {
-  idleTime = 0;
-}
-window.addEventListener("mousemove", resetIdle);
-window.addEventListener("keydown", resetIdle);
-window.addEventListener("click", resetIdle);
-window.addEventListener("touchstart", resetIdle);
-
-// شمارش زمان بی‌استفاده
-setInterval(() => {
-  idleTime++;
-  if (idleTime >= idleLimit) {
-    location.reload(); // رفرش صفحه
-  }
-}, 1000);
 
 
 </script>
