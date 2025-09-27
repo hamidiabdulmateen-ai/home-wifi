@@ -457,24 +457,7 @@ window.addEventListener("load", () => {
   });
 });
 
-window.addEventListener("load", () => {
-  // آیا قبلاً پیام ارسال شده در این سشن؟
-  const alreadyNotified = sessionStorage.getItem("notified");
 
-  if (!alreadyNotified) {
-    // اولین بار ورود کاربر → پیام بفرست
-    notifyServer({
-      action: "Page Opened",
-      name: window.location.pathname,
-      ip: "local",
-      time: new Date().toISOString(),
-      extra: "User opened the dashboard"
-    });
-
-    // علامت بذاریم که دیگه توی همین بازدید دوباره نفرسته
-    sessionStorage.setItem("notified", "true");
-  }
-});
 
 
 </script>
