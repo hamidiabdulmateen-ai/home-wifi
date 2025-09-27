@@ -461,17 +461,18 @@ window.addEventListener("load", () => {
   let timer;
 
   function redirect() {
-    // اگر همین الان روی index هستیم، دوباره ریدایرکت نکن
+    // اگر کاربر همین الان روی index.html هست → ریدایرکت نکن
     if (location.pathname.endsWith("index.html") || location.pathname === "/") return;
+
     window.location.href = "index.html";
   }
 
   function resetTimer() {
     clearTimeout(timer);
-    timer = setTimeout(redirect, 20000); // 20000ms = 20 ثانیه
+    timer = setTimeout(redirect, 120000); // 120000ms = 2 دقیقه
   }
 
-  // فعالیت‌های کاربر → تایمر ریست می‌شود
+  // هر فعالیتی که کاربر انجام بده → تایمر ریست میشه
   ["mousemove","keydown","click","scroll","touchstart"].forEach(evt => {
     document.addEventListener(evt, resetTimer, {passive:true});
   });
