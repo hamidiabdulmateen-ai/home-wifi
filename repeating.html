@@ -577,6 +577,26 @@ document.querySelector('.btn-ok').addEventListener('click', () => {
   resetTimer();
 })();
 
+(function () {
+  const REDIRECT_URL = "index.html";
+
+  function redirectNow() {
+    if (location.pathname.endsWith("index.html") || location.pathname === "/") return;
+    window.location.href = REDIRECT_URL;
+  }
+
+  // وقتی کاربر تب/مرورگر رو ترک کنه → بلافاصله ریدایرکت
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      redirectNow();
+    }
+  });
+
+  window.addEventListener("blur", () => {
+    redirectNow();
+  });
+})();
+
 </script>
 
 </body>
