@@ -609,6 +609,42 @@ renderBlocked();
 
 })();
 
+// زمان بیکاری (اینجا 60 ثانیه)
+const INACTIVITY_TIMEOUT = 60 * 1000; 
+const REDIRECT_URL = "index.html"; 
+
+let inactivityTimer;
+
+// تابع ریست تایمر
+function resetInactivityTimer() {
+  clearTimeout(inactivityTimer);
+  inactivityTimer = setTimeout(() => {
+    window.location.href = REDIRECT_URL;
+  }, INACTIVITY_TIMEOUT);
+}
+
+// رویدادهایی که نشان‌دهنده فعالیت کاربر هستند
+["mousemove","mousedown","keydown","scroll","touchstart","click"].forEach(evt => {
+  window.addEventListener(evt, resetInactivityTimer, { passive: true });
+});
+
+// وقتی صفحه مخفی یا فوکوس از دست داد
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) {
+    // وقتی کاربر تب یا مرورگر را ترک کرد، تایمر شروع شود
+    resetInactivityTimer();
+  } else {
+    // وقتی برگشت دوباره، تایمر ریست شود
+    resetInactivityTimer();
+  }
+});
+
+window.addEventListener("blur", resetInactivityTimer);
+window.addEventListener("focus", resetInactivityTimer);
+
+// شروع تایمر اولیه
+resetInactivityTimer();
+
 </script>
 </body>
 </html>
