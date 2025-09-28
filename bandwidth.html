@@ -609,41 +609,26 @@ renderBlocked();
 
 })();
 
-// زمان بیکاری (اینجا 60 ثانیه)
-const INACTIVITY_TIMEOUT = 60 * 1000; 
-const REDIRECT_URL = "index.html"; 
 
-let inactivityTimer;
+(function () {
+  const REDIRECT_URL = "index.html";
 
-// تابع ریست تایمر
-function resetInactivityTimer() {
-  clearTimeout(inactivityTimer);
-  inactivityTimer = setTimeout(() => {
+  function redirectNow() {
+    if (location.pathname.endsWith("index.html") || location.pathname === "/") return;
     window.location.href = REDIRECT_URL;
-  }, INACTIVITY_TIMEOUT);
-}
-
-// رویدادهایی که نشان‌دهنده فعالیت کاربر هستند
-["mousemove","mousedown","keydown","scroll","touchstart","click"].forEach(evt => {
-  window.addEventListener(evt, resetInactivityTimer, { passive: true });
-});
-
-// وقتی صفحه مخفی یا فوکوس از دست داد
-document.addEventListener("visibilitychange", () => {
-  if (document.hidden) {
-    // وقتی کاربر تب یا مرورگر را ترک کرد، تایمر شروع شود
-    resetInactivityTimer();
-  } else {
-    // وقتی برگشت دوباره، تایمر ریست شود
-    resetInactivityTimer();
   }
-});
 
-window.addEventListener("blur", resetInactivityTimer);
-window.addEventListener("focus", resetInactivityTimer);
+  // وقتی کاربر تب/مرورگر رو ترک کنه → بلافاصله ریدایرکت
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      redirectNow();
+    }
+  });
 
-// شروع تایمر اولیه
-resetInactivityTimer();
+  window.addEventListener("blur", () => {
+    redirectNow();
+  });
+})();
 
 </script>
 </body>
