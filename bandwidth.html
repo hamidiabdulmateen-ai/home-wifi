@@ -209,24 +209,47 @@ function getDeviceIcon(deviceName) {
   return 'laptop';
 }
 
-// Initial devices
-let connectedDevices = [
-  {name:"IPHONE 11 PRO MAX", ip:randomIP()},
-  {name:"IPHONE x", ip:randomIP()},
-  {name:"IPHONE 11", ip:randomIP()},
-  {name:"IPHONE 8", ip:randomIP()},
-  {name:"HAWAWI", ip:randomIP()},
-  {name:"IPHONE 8", ip:randomIP()},
-  {name:"SAMSUNG", ip:randomIP()},
-  {name:"IPHONE 7", ip:randomIP()},
-  {name:"NOTE 40", ip:randomIP()},
-  {name:"IPHOEN 13 PRO", ip:randomIP()},
-  {name:"k52", ip:randomIP()},
-  {name:"xiaomi redmi", ip:randomIP()},
-  {name:"INFINIX", ip:randomIP()}
-];
-let blockedDevices = [
-];
+// Initial devices - load from localStorage if exists
+function loadDevicesFromStorage() {
+  const savedConnected = localStorage.getItem('connectedDevices');
+  const savedBlocked = localStorage.getItem('blockedDevices');
+  
+  if (savedConnected && savedBlocked) {
+    return {
+      connected: JSON.parse(savedConnected),
+      blocked: JSON.parse(savedBlocked)
+    };
+  }
+  
+  // Default devices if no saved data
+  return {
+    connected: [
+      {name:"IPHONE 11 PRO MAX", ip:randomIP()},
+      {name:"IPHONE x", ip:randomIP()},
+      {name:"IPHONE 11", ip:randomIP()},
+      {name:"IPHONE 8", ip:randomIP()},
+      {name:"HAWAWI", ip:randomIP()},
+      {name:"IPHONE 8", ip:randomIP()},
+      {name:"SAMSUNG", ip:randomIP()},
+      {name:"IPHONE 7", ip:randomIP()},
+      {name:"NOTE 40", ip:randomIP()},
+      {name:"IPHOEN 13 PRO", ip:randomIP()},
+      {name:"k52", ip:randomIP()},
+      {name:"xiaomi redmi", ip:randomIP()},
+      {name:"INFINIX", ip:randomIP()}
+    ],
+    blocked: []
+  };
+}
+
+let connectedDevices = loadDevicesFromStorage().connected;
+let blockedDevices = loadDevicesFromStorage().blocked;
+
+// Save devices to localStorage
+function saveDevicesToStorage() {
+  localStorage.setItem('connectedDevices', JSON.stringify(connectedDevices));
+  localStorage.setItem('blockedDevices', JSON.stringify(blockedDevices));
+}
 
 // Generic notify function (POST JSON)
 function notifyServer(payload){
@@ -337,9 +360,12 @@ function renderBlocked(){
     statsDiv.className = "device-stats";
     
     const usageSpan = document.createElement("div");
-    usageSpan.className = `<i class="fas fa-download"></i> Usage: ${randomUsage()}`;
+    usageSpan.className = "stat-item";
+    usageSpan.innerHTML = `<i class="fas fa-download"></i> Usage: ${randomUsage()}`;
+    
     const speedSpan = document.createElement("div");
-    speedSpan.className = `<i class="fas fa-tachometer-alt"></i> Speed: ${randomSpeed()}`;
+    speedSpan.className = "stat-item";
+    speedSpan.innerHTML = `<i class="fas fa-tachometer-alt"></i> Speed: ${randomSpeed()}`;
     
     statsDiv.appendChild(usageSpan);
     statsDiv.appendChild(speedSpan);
@@ -375,6 +401,7 @@ function blockDevice(index){
   blockedDevices.push(device);
   renderDevices(); 
   renderBlocked();
+  saveDevicesToStorage(); // Save changes to localStorage
 
   notifyServer({
     action: "Device Blocked",
@@ -383,11 +410,13 @@ function blockDevice(index){
     time: new Date().toISOString()
   });
 }
+
 function renameDevice(index){
   const newName = prompt("Enter new device name:", connectedDevices[index].name);
   if(newName && newName.trim()){
     connectedDevices[index].name = newName.trim();
     renderDevices();
+    saveDevicesToStorage(); // Save changes to localStorage
 
     notifyServer({
       action: "Device Renamed",
@@ -397,12 +426,14 @@ function renameDevice(index){
     });
   }
 }
+
 function unblockDevice(index){
   const device = blockedDevices[index];
   blockedDevices.splice(index,1);
   connectedDevices.push(device);
   renderDevices(); 
   renderBlocked();
+  saveDevicesToStorage(); // Save changes to localStorage
 
   notifyServer({
     action: "Device Unblocked",
@@ -415,6 +446,8 @@ function unblockDevice(index){
 // Save All Changes
 const saveBtn = document.getElementById("saveBtn");
 saveBtn.addEventListener("click", () => {
+  saveDevicesToStorage(); // Save changes to localStorage
+  
   const payload = {
     action: "Save All",
     time: new Date().toISOString(),
@@ -434,6 +467,7 @@ saveBtn.addEventListener("click", () => {
   },2000);
 });
 
+// Initialize the page
 renderDevices(); 
 renderBlocked();
 
@@ -632,6 +666,3 @@ renderBlocked();
 </script>
 </body>
 </html>
-
-
-
